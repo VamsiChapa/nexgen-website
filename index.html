@@ -204,105 +204,262 @@
 <section class="courses section section--bg" id="courses">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">What We Offer</span>
-      <h2 class="section-title">Our <span>Courses</span></h2>
-      <p>Industry-relevant programs designed for career growth</p>
+      <span class="section-tag">Find Your Path</span>
+      <h2 class="section-title">Choose Your <span>Interest</span></h2>
+      <p>Pick what excites you — we have the perfect course to launch your career</p>
     </div>
 
-    <div class="courses__grid">
+    <!-- ── Interest filter bar ── -->
+    <div class="int-bar">
+      <button class="int-btn active" data-filter="all">
+        <i class="fa-solid fa-layer-group"></i><span>All Courses</span>
+      </button>
+      <button class="int-btn" data-filter="it">
+        <i class="fa-solid fa-code"></i><span>IT &amp; Programming</span>
+      </button>
+      <button class="int-btn" data-filter="accounts">
+        <i class="fa-solid fa-chart-bar"></i><span>Accounts &amp; Finance</span>
+      </button>
+      <button class="int-btn" data-filter="basics">
+        <i class="fa-solid fa-desktop"></i><span>Computer Basics</span>
+      </button>
+      <button class="int-btn" data-filter="special">
+        <i class="fa-solid fa-star"></i><span>Special Skills</span>
+      </button>
+    </div>
 
-      <!-- Course cards — add/remove as needed -->
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#e8f4fd;">
-          <i class="fa-solid fa-laptop-code" style="color:#0077cc;"></i>
+    <!-- ── Cards grid ── -->
+    <div class="cg">
+
+      <!-- PGDCA -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <span class="cc__badge">🔥 Most Popular</span>
+          <div class="cc__ico"><i class="fa-solid fa-laptop-code"></i></div>
+          <div class="cc__nm">PGDCA</div>
+          <div class="cc__fn">Post Graduate Diploma in Computer Applications</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 1 Year</span>
+            <span><i class="fa-solid fa-graduation-cap"></i> Graduate+</span>
+          </div>
         </div>
-        <h3>PGDCA</h3>
-        <p>Post Graduate Diploma in Computer Applications – a comprehensive 1-year program for graduates.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Programming &amp; Software Skills</li>
+            <li>Database &amp; Networking</li>
+            <li>Live Project Work</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-rocket"></i> IT Job Ready</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#fff3e0;">
-          <i class="fa-solid fa-desktop" style="color:#e65100;"></i>
+      <!-- DCA -->
+      <div class="cc" data-cat="basics" style="--hc:#e67e22">
+        <div class="cc__hd">
+          <span class="cc__badge">✅ Best for Beginners</span>
+          <div class="cc__ico"><i class="fa-solid fa-desktop"></i></div>
+          <div class="cc__nm">DCA</div>
+          <div class="cc__fn">Diploma in Computer Applications</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 6 Months</span>
+            <span><i class="fa-solid fa-school"></i> 10th / 12th Pass</span>
+          </div>
         </div>
-        <h3>DCA</h3>
-        <p>Diploma in Computer Applications – ideal for students after 10th/12th to begin their IT journey.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Computer Fundamentals</li>
+            <li>MS-Office Suite</li>
+            <li>Internet &amp; Basics</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-briefcase"></i> Office Ready</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#e8f5e9;">
-          <i class="fa-solid fa-calculator" style="color:#2e7d32;"></i>
+      <!-- Tally Prime -->
+      <div class="cc" data-cat="accounts" style="--hc:#1a9e5c">
+        <div class="cc__hd">
+          <span class="cc__badge">⚡ High Demand</span>
+          <div class="cc__ico"><i class="fa-solid fa-calculator"></i></div>
+          <div class="cc__nm">Tally Prime</div>
+          <div class="cc__fn">Complete Accounting &amp; GST Software</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 3 Months</span>
+            <span><i class="fa-solid fa-users"></i> Commerce Students</span>
+          </div>
         </div>
-        <h3>Tally Prime</h3>
-        <p>Complete accounting software training – GST, payroll, inventory &amp; financial reports.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>GST &amp; Taxation</li>
+            <li>Payroll &amp; Inventory</li>
+            <li>Financial Reports</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-coins"></i> Accounts Job Ready</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#f3e5f5;">
-          <i class="fa-brands fa-microsoft" style="color:#7b1fa2;"></i>
+      <!-- MS-Office -->
+      <div class="cc" data-cat="basics" style="--hc:#e67e22">
+        <div class="cc__hd">
+          <span class="cc__badge">💼 Essential Skill</span>
+          <div class="cc__ico"><i class="fa-brands fa-microsoft"></i></div>
+          <div class="cc__nm">MS-Office</div>
+          <div class="cc__fn">Word, Excel, PowerPoint &amp; More</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 2 Months</span>
+            <span><i class="fa-solid fa-users"></i> All Levels</span>
+          </div>
         </div>
-        <h3>MS-Office</h3>
-        <p>Word, Excel, PowerPoint, Access &amp; Outlook – essential tools for every professional.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Word, Excel &amp; PowerPoint</li>
+            <li>Outlook &amp; Access</li>
+            <li>Data Entry Skills</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-file-alt"></i> Office Professional</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#e3f2fd;">
-          <i class="fa-brands fa-python" style="color:#1565c0;"></i>
+      <!-- Python -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <span class="cc__badge">📈 Trending</span>
+          <div class="cc__ico"><i class="fa-brands fa-python"></i></div>
+          <div class="cc__nm">Python</div>
+          <div class="cc__fn">Most In-Demand Programming Language</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 3 Months</span>
+            <span><i class="fa-solid fa-seedling"></i> Beginner+</span>
+          </div>
         </div>
-        <h3>Python</h3>
-        <p>Learn the most in-demand programming language – scripting, automation, data science basics.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Scripting &amp; Automation</li>
+            <li>Data Science Basics</li>
+            <li>Real-world Projects</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-code"></i> Developer Career</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#fce4ec;">
-          <i class="fa-brands fa-java" style="color:#b71c1c;"></i>
+      <!-- Java -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <span class="cc__badge">⭐ Industry Standard</span>
+          <div class="cc__ico"><i class="fa-brands fa-java"></i></div>
+          <div class="cc__nm">Java</div>
+          <div class="cc__fn">Object-Oriented Programming &amp; App Dev</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 4 Months</span>
+            <span><i class="fa-solid fa-chart-line"></i> Intermediate</span>
+          </div>
         </div>
-        <h3>Java</h3>
-        <p>Object-oriented programming, core Java concepts &amp; application development fundamentals.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>OOP Concepts &amp; Core Java</li>
+            <li>App Development</li>
+            <li>Problem Solving</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-building"></i> Software Developer</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#e0f7fa;">
-          <i class="fa-solid fa-c" style="color:#006064;"></i>
+      <!-- C Language -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <div class="cc__ico"><i class="fa-solid fa-c"></i></div>
+          <div class="cc__nm">C Language</div>
+          <div class="cc__fn">Foundation of All Programming</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 2 Months</span>
+            <span><i class="fa-solid fa-seedling"></i> Beginner</span>
+          </div>
         </div>
-        <h3>C Language</h3>
-        <p>Foundation of programming – logic building, data structures &amp; algorithm design.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Logic Building &amp; Algorithms</li>
+            <li>Data Structures</li>
+            <li>Programming Concepts</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-brain"></i> Strong Foundation</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#fff8e1;">
-          <i class="fa-brands fa-html5" style="color:#e65100;"></i>
+      <!-- HTML & Web Design -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <span class="cc__badge">🎨 Creative Track</span>
+          <div class="cc__ico"><i class="fa-brands fa-html5"></i></div>
+          <div class="cc__nm">HTML &amp; Web Design</div>
+          <div class="cc__fn">Build Modern Websites from Scratch</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 2 Months</span>
+            <span><i class="fa-solid fa-users"></i> All Levels</span>
+          </div>
         </div>
-        <h3>HTML &amp; Web Design</h3>
-        <p>Build modern websites with HTML5, CSS3 &amp; responsive design principles.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>HTML5 &amp; CSS3</li>
+            <li>Responsive Design</li>
+            <li>Portfolio Projects</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-globe"></i> Web Designer</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#e8eaf6;">
-          <i class="fa-solid fa-database" style="color:#283593;"></i>
+      <!-- SQL / Database -->
+      <div class="cc" data-cat="it" style="--hc:#1a6eb5">
+        <div class="cc__hd">
+          <div class="cc__ico"><i class="fa-solid fa-database"></i></div>
+          <div class="cc__nm">SQL / Database</div>
+          <div class="cc__fn">Relational Databases &amp; Data Management</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 2 Months</span>
+            <span><i class="fa-solid fa-chart-line"></i> Intermediate</span>
+          </div>
         </div>
-        <h3>SQL / Database</h3>
-        <p>Relational databases, SQL queries, data management &amp; DBMS concepts.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>SQL Queries &amp; Joins</li>
+            <li>Data Management</li>
+            <li>DBMS Concepts</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-chart-bar"></i> Data Career</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-      <div class="course-card">
-        <div class="course-card__icon" style="background:#fafafa;">
-          <i class="fa-solid fa-pen-nib" style="color:#37474f;"></i>
+      <!-- Handwriting -->
+      <div class="cc" data-cat="special" style="--hc:#8e44ad">
+        <div class="cc__hd">
+          <span class="cc__badge">✨ Special Program</span>
+          <div class="cc__ico"><i class="fa-solid fa-pen-nib"></i></div>
+          <div class="cc__nm">Handwriting</div>
+          <div class="cc__fn">21-Hour Handwriting Improvement Program</div>
+          <div class="cc__pills">
+            <span><i class="fa-regular fa-clock"></i> 21 Hours</span>
+            <span><i class="fa-solid fa-child"></i> All Ages</span>
+          </div>
         </div>
-        <h3>Hand Writing Improvement</h3>
-        <p>Special 21-hour program to improve handwriting – ideal for students of all ages.</p>
-        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cc__bd">
+          <ul>
+            <li>Penmanship Techniques</li>
+            <li>Speed &amp; Clarity</li>
+            <li>Presentation Skills</li>
+          </ul>
+          <div class="cc__out"><i class="fa-solid fa-pen"></i> Clear &amp; Confident</div>
+          <a href="#contact" class="cc__cta">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
 
-    </div><!-- /.courses__grid -->
+    </div><!-- /.cg -->
   </div>
 </section>
 

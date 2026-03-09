@@ -108,6 +108,22 @@
   window.addEventListener('scroll', animateStats, { passive: true });
   animateStats();
 
+  /* ── COURSE INTEREST FILTER ─────────────────────────────────── */
+  const intBtns     = $$('.int-btn');
+  const courseCards = $$('.cc');
+
+  intBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      intBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      courseCards.forEach(card => {
+        const show = filter === 'all' || card.dataset.cat === filter;
+        card.classList.toggle('hidden', !show);
+      });
+    });
+  });
+
   /* ── GALLERY FILTER ──────────────────────────────────────────── */
   const filterBtns  = $$('.gallery__filter-btn');
   const galleryItems = $$('.gallery__item');
@@ -257,7 +273,7 @@
   });
 
   /* ── SCROLL-IN ANIMATION (Intersection Observer) ────────────── */
-  const animEls = $$('.course-card, .feature-card, .gallery__item, .stat-card, .about__grid, .certification__grid');
+  const animEls = $$('.cc, .feature-card, .gallery__item, .stat-card, .about__grid, .certification__grid');
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
