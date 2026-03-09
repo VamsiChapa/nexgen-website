@@ -26,7 +26,7 @@ git init
 git add .
 git commit -m "Initial commit — NEx-gEN website"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/nexgen-website.git
+git remote add origin https://github.com/VamsiChapa/nexgen-website.git
 git push -u origin main
 
 # 5. In GitHub → Repository → Settings → Pages
