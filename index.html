@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NEx-gEN School of Computers – ISO 9001:2015 Certified Computer Training Institute in Srikakulam. Courses: PGDCA, DCA, Tally, MS-Office, Python, Java, C, HTML, SQL." />
+  <meta name="keywords" content="computer courses srikakulam, PGDCA, DCA, Tally, Python, Java, NEx-gEN, computer training institute andhra pradesh" />
+  <title>NEx-gEN School of Computers | Srikakulam</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome (icons – free CDN, no license issues) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Chatbot CSS -->
+  <link rel="stylesheet" href="css/chatbot.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     TOP BAR
+============================================================ -->
+<div class="top-bar">
+  <div class="container top-bar__inner">
+    <div class="top-bar__left">
+      <span><i class="fa-solid fa-phone"></i> +91 6301012437</span>
+      <span><i class="fa-solid fa-envelope"></i> info.nexgensrikakulam@gmail.com</span>
+    </div>
+    <div class="top-bar__right">
+      <a href="https://facebook.com/nexgensrikakulam" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://wa.me/916301012437" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+
+    <!-- LOGO -->
+    <a href="#home" class="navbar__logo">
+      <img src="images/logo.svg" alt="NEx-gEN School of Computers Logo" id="logo-img"
+           onerror="this.src='images/logo.png';" />
+    </a>
+
+    <!-- Hamburger -->
+    <button class="navbar__hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Nav links -->
+    <nav class="navbar__nav" id="nav-menu">
+      <ul>
+        <li><a href="#home"      class="nav-link">Home</a></li>
+        <li><a href="#about"     class="nav-link">About Us</a></li>
+        <li><a href="#courses"   class="nav-link">Courses</a></li>
+        <li><a href="#features"  class="nav-link">Why Us</a></li>
+        <li><a href="#gallery"   class="nav-link">Gallery</a></li>
+        <li><a href="#contact"   class="nav-link">Contact</a></li>
+        <li><a href="#contact" class="btn btn--primary btn--sm">Enquire Now</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================================================
+     HERO / SLIDER
+============================================================ -->
+<section class="hero" id="home">
+  <div class="hero__slider" id="heroSlider">
+
+    <!-- Slide 1 -->
+    <div class="hero__slide hero__slide--active" style="background-image: url('images/hero1.jpg');">
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <span class="hero__badge">ISO 9001 : 2015 Certified</span>
+        <h1>Build Your<br /><span>Dream Career</span> in IT</h1>
+        <p>28+ Years of Service Excellence · Established 2007 · Srikakulam</p>
+        <div class="hero__btns">
+          <a href="#courses" class="btn btn--primary">Explore Courses</a>
+          <a href="#contact" class="btn btn--outline">Contact Us</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hero__slide" style="background-image: url('images/hero2.jpg');">
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <span class="hero__badge">100% Practical Training</span>
+        <h1>Learn from<br /><span>Expert Faculty</span></h1>
+        <p>Theory · Practicals · Assignment · Evaluation = Certificate</p>
+        <div class="hero__btns">
+          <a href="#courses" class="btn btn--primary">View Courses</a>
+          <a href="#contact" class="btn btn--outline">Enroll Now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hero__slide" style="background-image: url('images/hero3.jpg');">
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <span class="hero__badge">Placement Assistance</span>
+        <h1>Your Career<br /><span>Starts Here</span></h1>
+        <p>PGDCA · DCA · Tally · Python · Java · MS-Office &amp; more</p>
+        <div class="hero__btns">
+          <a href="#courses" class="btn btn--primary">Get Started</a>
+          <a href="#about"   class="btn btn--outline">Know More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slider controls -->
+  <button class="hero__arrow hero__arrow--prev" id="heroPrev" aria-label="Previous slide">
+    <i class="fa-solid fa-chevron-left"></i>
+  </button>
+  <button class="hero__arrow hero__arrow--next" id="heroNext" aria-label="Next slide">
+    <i class="fa-solid fa-chevron-right"></i>
+  </button>
+  <div class="hero__dots" id="heroDots">
+    <span class="hero__dot hero__dot--active" data-index="0"></span>
+    <span class="hero__dot" data-index="1"></span>
+    <span class="hero__dot" data-index="2"></span>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS STRIP
+============================================================ -->
+<section class="stats">
+  <div class="container stats__grid">
+    <div class="stat-card">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span class="stat-number" data-target="18">0</span><span class="stat-suffix">+</span>
+      <p>Years of Excellence</p>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span class="stat-number" data-target="5000">0</span><span class="stat-suffix">+</span>
+      <p>Students Trained</p>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-book-open"></i>
+      <span class="stat-number" data-target="10">0</span><span class="stat-suffix">+</span>
+      <p>Courses Offered</p>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-briefcase"></i>
+      <span class="stat-number" data-target="90">0</span><span class="stat-suffix">%</span>
+      <p>Placement Rate</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ABOUT
+============================================================ -->
+<section class="about section" id="about">
+  <div class="container about__grid">
+    <div class="about__image-wrap">
+      <!-- Replace with your institute/building photo -->
+      <img src="images/about.jpg" alt="NEx-gEN School of Computers building"
+           onerror="this.src='https://placehold.co/520x380/003087/ffffff?text=NEx-gEN+Institute'" />
+      <div class="about__iso-badge">
+        <img src="images/iso-badge.png" alt="ISO 9001:2015 Certified"
+             onerror="this.parentElement.innerHTML='<div class=\'iso-text-badge\'>ISO<br>9001:2015<br>Certified</div>'" />
+      </div>
+    </div>
+
+    <div class="about__content">
+      <span class="section-tag">About Us</span>
+      <h2 class="section-title">Empowering Futures Through <span>Quality Education</span></h2>
+      <p>NEx-gEN School of Computers has been a premier computer training institute in Srikakulam since 2007. We are proud to hold the <strong>ISO 9001:2015</strong> certification for providing quality software, hardware training &amp; IT solutions.</p>
+      <p>With experienced faculty, air-conditioned labs, and hands-on practical sessions, we prepare students for real-world IT careers. Our methodology: <em>Theory + Practicals + Assignment + Evaluation = Certificate</em>.</p>
+
+      <ul class="about__highlights">
+        <li><i class="fa-solid fa-circle-check"></i> Estd. 2007 – 18+ years of trust</li>
+        <li><i class="fa-solid fa-circle-check"></i> ISO 9001:2015 Certified Institute</li>
+        <li><i class="fa-solid fa-circle-check"></i> Courses in IT, Accounts, Admin &amp; Design</li>
+        <li><i class="fa-solid fa-circle-check"></i> Lifetime support &amp; career guidance</li>
+      </ul>
+
+      <a href="#contact" class="btn btn--primary">Enquire Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COURSES
+============================================================ -->
+<section class="courses section section--bg" id="courses">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">What We Offer</span>
+      <h2 class="section-title">Our <span>Courses</span></h2>
+      <p>Industry-relevant programs designed for career growth</p>
+    </div>
+
+    <div class="courses__grid">
+
+      <!-- Course cards — add/remove as needed -->
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#e8f4fd;">
+          <i class="fa-solid fa-laptop-code" style="color:#0077cc;"></i>
+        </div>
+        <h3>PGDCA</h3>
+        <p>Post Graduate Diploma in Computer Applications – a comprehensive 1-year program for graduates.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#fff3e0;">
+          <i class="fa-solid fa-desktop" style="color:#e65100;"></i>
+        </div>
+        <h3>DCA</h3>
+        <p>Diploma in Computer Applications – ideal for students after 10th/12th to begin their IT journey.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#e8f5e9;">
+          <i class="fa-solid fa-calculator" style="color:#2e7d32;"></i>
+        </div>
+        <h3>Tally Prime</h3>
+        <p>Complete accounting software training – GST, payroll, inventory &amp; financial reports.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#f3e5f5;">
+          <i class="fa-brands fa-microsoft" style="color:#7b1fa2;"></i>
+        </div>
+        <h3>MS-Office</h3>
+        <p>Word, Excel, PowerPoint, Access &amp; Outlook – essential tools for every professional.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#e3f2fd;">
+          <i class="fa-brands fa-python" style="color:#1565c0;"></i>
+        </div>
+        <h3>Python</h3>
+        <p>Learn the most in-demand programming language – scripting, automation, data science basics.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#fce4ec;">
+          <i class="fa-brands fa-java" style="color:#b71c1c;"></i>
+        </div>
+        <h3>Java</h3>
+        <p>Object-oriented programming, core Java concepts &amp; application development fundamentals.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#e0f7fa;">
+          <i class="fa-solid fa-c" style="color:#006064;"></i>
+        </div>
+        <h3>C Language</h3>
+        <p>Foundation of programming – logic building, data structures &amp; algorithm design.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#fff8e1;">
+          <i class="fa-brands fa-html5" style="color:#e65100;"></i>
+        </div>
+        <h3>HTML &amp; Web Design</h3>
+        <p>Build modern websites with HTML5, CSS3 &amp; responsive design principles.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#e8eaf6;">
+          <i class="fa-solid fa-database" style="color:#283593;"></i>
+        </div>
+        <h3>SQL / Database</h3>
+        <p>Relational databases, SQL queries, data management &amp; DBMS concepts.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card__icon" style="background:#fafafa;">
+          <i class="fa-solid fa-pen-nib" style="color:#37474f;"></i>
+        </div>
+        <h3>Hand Writing Improvement</h3>
+        <p>Special 21-hour program to improve handwriting – ideal for students of all ages.</p>
+        <a href="#contact" class="course-card__link">Enquire <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+    </div><!-- /.courses__grid -->
+  </div>
+</section>
+
+<!-- ============================================================
+     WHY CHOOSE US
+============================================================ -->
+<section class="features section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Why Choose NEx-gEN</span>
+      <h2 class="section-title">Features of <span>NEx-gEN</span></h2>
+      <p>Everything you need to succeed in your IT career</p>
+    </div>
+
+    <div class="features__grid">
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-snowflake"></i></div>
+        <h4>Fully Air Conditioned</h4>
+        <p>Comfortable, cool learning environment year-round.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+        <h4>Highly Experienced Faculty</h4>
+        <p>Industry professionals with years of teaching expertise.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-book"></i></div>
+        <h4>Adequate Knowledge</h4>
+        <p>Curriculum updated with current industry standards.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-flask"></i></div>
+        <h4>100% Practical Orientation</h4>
+        <p>Hands-on training in every class for real-world readiness.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-compass"></i></div>
+        <h4>Career Guidance</h4>
+        <p>Personal mentoring to help you choose the right career path.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-infinity"></i></div>
+        <h4>Life Time Support</h4>
+        <p>Our support doesn't end when your course does.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-handshake"></i></div>
+        <h4>Placement Assistance</h4>
+        <p>Active tie-ups with local companies to help you get placed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-computer"></i></div>
+        <h4>State of Art Computer Lab</h4>
+        <p>Modern systems with the latest software installed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-bolt"></i></div>
+        <h4>24 Hours Power Supply</h4>
+        <p>Uninterrupted power with generator backup.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon"><i class="fa-solid fa-certificate"></i></div>
+        <h4>ISO 9001:2015 Certified</h4>
+        <p>Internationally recognized quality management certification.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     GALLERY
+============================================================ -->
+<section class="gallery section section--bg" id="gallery">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Our Campus</span>
+      <h2 class="section-title">Photo <span>Gallery</span></h2>
+      <p>A glimpse of life at NEx-gEN School of Computers</p>
+    </div>
+
+    <!-- Filter buttons -->
+    <div class="gallery__filters">
+      <button class="gallery__filter-btn active" data-filter="all">All</button>
+      <button class="gallery__filter-btn" data-filter="campus">Campus</button>
+      <button class="gallery__filter-btn" data-filter="lab">Lab</button>
+      <button class="gallery__filter-btn" data-filter="events">Events</button>
+      <button class="gallery__filter-btn" data-filter="students">Students</button>
+    </div>
+
+    <div class="gallery__grid" id="galleryGrid">
+      <!--
+        HOW TO ADD YOUR OWN PHOTOS:
+        1. Place your images inside the images/gallery/ folder
+        2. Copy a <div class="gallery__item"> block below
+        3. Change the img src to your file name, e.g. images/gallery/my-photo.jpg
+        4. Set data-cat to: campus | lab | events | students
+      -->
+
+      <div class="gallery__item" data-cat="campus">
+        <img src="images/gallery/campus1.jpg" alt="NEx-gEN campus front view"
+             onerror="this.src='https://placehold.co/400x300/003087/ffffff?text=Campus+Photo'" />
+        <div class="gallery__item-overlay"><span>Our Campus</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="lab">
+        <img src="images/gallery/lab1.jpg" alt="Computer lab"
+             onerror="this.src='https://placehold.co/400x300/cc0000/ffffff?text=Computer+Lab'" />
+        <div class="gallery__item-overlay"><span>Computer Lab</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="students">
+        <img src="images/gallery/students1.jpg" alt="Students in class"
+             onerror="this.src='https://placehold.co/400x300/f4a800/000000?text=Students'" />
+        <div class="gallery__item-overlay"><span>Students</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="events">
+        <img src="images/gallery/event1.jpg" alt="Certificate distribution event"
+             onerror="this.src='https://placehold.co/400x300/1a7a4a/ffffff?text=Certificate+Event'" />
+        <div class="gallery__item-overlay"><span>Certificate Event</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="lab">
+        <img src="images/gallery/lab2.jpg" alt="Lab session"
+             onerror="this.src='https://placehold.co/400x300/003087/ffffff?text=Lab+Session'" />
+        <div class="gallery__item-overlay"><span>Lab Session</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="campus">
+        <img src="images/gallery/campus2.jpg" alt="Institute building"
+             onerror="this.src='https://placehold.co/400x300/cc0000/ffffff?text=Institute'" />
+        <div class="gallery__item-overlay"><span>Institute</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="students">
+        <img src="images/gallery/students2.jpg" alt="Practical training"
+             onerror="this.src='https://placehold.co/400x300/f4a800/000000?text=Practical+Training'" />
+        <div class="gallery__item-overlay"><span>Practical Training</span></div>
+      </div>
+
+      <div class="gallery__item" data-cat="events">
+        <img src="images/gallery/event2.jpg" alt="Annual day"
+             onerror="this.src='https://placehold.co/400x300/1a7a4a/ffffff?text=Annual+Day'" />
+        <div class="gallery__item-overlay"><span>Annual Day</span></div>
+      </div>
+
+    </div><!-- /.gallery__grid -->
+
+    <!-- Lightbox overlay -->
+    <div class="lightbox" id="lightbox">
+      <button class="lightbox__close" id="lightboxClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <img src="" alt="" id="lightboxImg" />
+      <p id="lightboxCaption"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CERTIFICATION
+============================================================ -->
+<section class="certification section">
+  <div class="container certification__grid">
+    <div class="certification__content">
+      <span class="section-tag">Quality Assurance</span>
+      <h2 class="section-title">ISO <span>9001:2015</span> Certified</h2>
+      <p>NEx-gEN School of Computers is certified by <strong>IQMS Certifications Pvt. Ltd.</strong> for providing quality software, hardware training &amp; IT solutions.</p>
+      <ul class="certification__details">
+        <li><strong>Certificate No.:</strong> 11301923</li>
+        <li><strong>Valid Until:</strong> October 14, 2028</li>
+        <li><strong>Scope:</strong> Providing Quality Of Software, Hardware Training &amp; IT Solutions</li>
+        <li><strong>Certifying Body:</strong> IQMS Certifications Private Limited</li>
+      </ul>
+    </div>
+    <div class="certification__image">
+      <!-- You can place the ISO certificate image here -->
+      <img src="images/iso-certificate.jpg" alt="ISO 9001:2015 Certificate of NEx-gEN School of Computers"
+           onerror="this.src='https://placehold.co/450x560/c8a84b/000000?text=ISO+9001%3A2015+Certificate'" />
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIALS
+============================================================ -->
+<section class="testimonials section section--bg" id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Student Reviews</span>
+      <h2 class="section-title">What Our <span>Students Say</span></h2>
+    </div>
+    <div class="testimonials__slider" id="testimonialSlider">
+
+      <div class="testimonial-card testimonial-card--active">
+        <div class="testimonial-card__stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p>"NEx-gEN gave me practical skills that helped me land my first job within 3 months of completing PGDCA. The faculty is extremely supportive."</p>
+        <div class="testimonial-card__author">
+          <div class="testimonial-card__avatar">RS</div>
+          <div>
+            <strong>Ramakrishna S.</strong>
+            <span>PGDCA Graduate, 2023</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-card__stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        </div>
+        <p>"The Tally course was very thorough. I now handle accounts for a local business. The practical training made all the difference."</p>
+        <div class="testimonial-card__author">
+          <div class="testimonial-card__avatar">PD</div>
+          <div>
+            <strong>Padmavathi D.</strong>
+            <span>Tally Student, 2024</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-card__stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-regular fa-star"></i>
+        </div>
+        <p>"Best computer institute in Srikakulam! The Python and Java course content is industry-level. Highly recommend to anyone wanting an IT career."</p>
+        <div class="testimonial-card__author">
+          <div class="testimonial-card__avatar">VR</div>
+          <div>
+            <strong>Venkat R.</strong>
+            <span>Python &amp; Java, 2024</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="testimonials__dots" id="testimonialDots">
+      <span class="hero__dot hero__dot--active" data-index="0"></span>
+      <span class="hero__dot" data-index="1"></span>
+      <span class="hero__dot" data-index="2"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+============================================================ -->
+<section class="contact section" id="contact">
+  <div class="container contact__grid">
+
+    <!-- Info column -->
+    <div class="contact__info">
+      <span class="section-tag">Get In Touch</span>
+      <h2 class="section-title">Contact <span>Us</span></h2>
+
+      <div class="contact__info-item">
+        <div class="contact__info-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div>
+          <strong>Address</strong>
+          <p>Opp. SP Office, Arts College Road,<br />Near RTC Complex, Srikakulam – 532001,<br />Andhra Pradesh, India</p>
+        </div>
+      </div>
+
+      <div class="contact__info-item">
+        <div class="contact__info-icon"><i class="fa-solid fa-phone"></i></div>
+        <div>
+          <strong>Mobile</strong>
+          <p><a href="tel:+916301012437">+91 6301012437</a></p>
+        </div>
+      </div>
+
+      <div class="contact__info-item">
+        <div class="contact__info-icon"><i class="fa-solid fa-globe"></i></div>
+        <div>
+          <strong>Website</strong>
+          <p><a href="https://www.nex-gen.in" target="_blank" rel="noopener">www.nex-gen.in</a></p>
+        </div>
+      </div>
+
+      <div class="contact__info-item">
+        <div class="contact__info-icon"><i class="fa-solid fa-envelope"></i></div>
+        <div>
+          <strong>Email</strong>
+          <p><a href="mailto:info.nexgensrikakulam@gmail.com">info.nexgensrikakulam@gmail.com</a></p>
+        </div>
+      </div>
+
+      <div class="contact__social">
+        <a href="https://facebook.com/nexgensrikakulam" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://wa.me/916301012437" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="YouTube">
+          <i class="fa-brands fa-youtube"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Form column -->
+    <div class="contact__form-wrap">
+      <h3>Send Us a Message</h3>
+      <form class="contact__form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">Full Name *</label>
+            <input type="text" id="fname" name="fname" placeholder="Your full name" required />
+          </div>
+          <div class="form-group">
+            <label for="fphone">Phone *</label>
+            <input type="tel" id="fphone" name="fphone" placeholder="+91 XXXXX XXXXX" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="femail">Email</label>
+          <input type="email" id="femail" name="femail" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label for="fcourse">Course Interested In</label>
+          <select id="fcourse" name="fcourse">
+            <option value="">-- Select a course --</option>
+            <option>PGDCA</option>
+            <option>DCA</option>
+            <option>Tally Prime</option>
+            <option>MS-Office</option>
+            <option>Python</option>
+            <option>Java</option>
+            <option>C Language</option>
+            <option>HTML &amp; Web Design</option>
+            <option>SQL / Database</option>
+            <option>Hand Writing Improvement</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fmessage">Message</label>
+          <textarea id="fmessage" name="fmessage" rows="4" placeholder="Any questions or additional info..."></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full">Send Enquiry <i class="fa-solid fa-paper-plane"></i></button>
+        <p class="form__success" id="formSuccess">Thank you! We will contact you shortly.</p>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Google Map embed — replace src with your actual Google Maps embed URL -->
+  <div class="contact__map">
+    <iframe
+      title="NEx-gEN School of Computers Location"
+      src="https://maps.google.com/maps?q=nex+gen+school+of+computers+srikakulam+andhra+pradesh&output=embed&z=17&hl=en"
+      width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="footer">
+  <div class="container footer__top">
+    <div class="footer__col">
+      <div class="footer__logo">
+        <img src="images/logo.svg" alt="NEx-gEN School of Computers"
+             onerror="this.src='images/logo.png';" />
+      </div>
+      <p>An ISO 9001:2015 certified computer training institute committed to quality education since 2007.</p>
+      <div class="footer__social">
+        <a href="https://facebook.com/nexgensrikakulam" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/916301012437" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <div class="footer__col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#courses">Courses</a></li>
+        <li><a href="#features">Why Us</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="#courses">PGDCA</a></li>
+        <li><a href="#courses">DCA</a></li>
+        <li><a href="#courses">Tally Prime</a></li>
+        <li><a href="#courses">MS-Office</a></li>
+        <li><a href="#courses">Python</a></li>
+        <li><a href="#courses">Java</a></li>
+        <li><a href="#courses">C Language</a></li>
+        <li><a href="#courses">HTML &amp; Web Design</a></li>
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <h4>Contact Info</h4>
+      <ul class="footer__contact">
+        <li><i class="fa-solid fa-location-dot"></i> Opp. SP Office, Arts College Road, Near RTC Complex, Srikakulam – 532001, AP</li>
+        <li><i class="fa-solid fa-phone"></i> <a href="tel:+916301012437">+91 6301012437</a></li>
+        <li><i class="fa-solid fa-envelope"></i> <a href="mailto:info.nexgensrikakulam@gmail.com">info.nexgensrikakulam@gmail.com</a></li>
+        <li><i class="fa-solid fa-globe"></i> <a href="https://www.nex-gen.in" target="_blank" rel="noopener">www.nex-gen.in</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="container footer__bottom-inner">
+      <p>&copy; <span id="footerYear"></span> NEx-gEN School of Computers. All Rights Reserved.</p>
+      <p>Designed for NEx-gEN, Srikakulam, Andhra Pradesh, India.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <i class="fa-solid fa-chevron-up"></i>
+</button>
+
+<!-- Main JS -->
+<script src="js/main.js"></script>
+
+<!-- Chatbot — data file first, then engine -->
+<script src="js/chatbot-data.js"></script>
+<script src="js/chatbot.js"></script>
+</body>
+</html>
