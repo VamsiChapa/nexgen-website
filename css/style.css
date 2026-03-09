@@ -835,6 +835,30 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .contact__info-item a      { color: var(--clr-primary); }
 .contact__info-item a:hover { text-decoration: underline; }
 
+.maps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: #e8f0fe;
+  border: 1.5px solid #c5d8fb;
+  border-radius: 20px;
+  color: #1a6eb5 !important;
+  font-size: .78rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: background .2s, transform .2s;
+}
+.maps-link:hover {
+  background: #1a6eb5;
+  border-color: #1a6eb5;
+  color: #fff !important;
+  transform: translateY(-1px);
+  text-decoration: none !important;
+}
+.maps-link .fa-arrow-up-right-from-square { font-size: .7rem; }
+
 .contact__social {
   display: flex; gap: 10px; margin-top: 8px;
 }
