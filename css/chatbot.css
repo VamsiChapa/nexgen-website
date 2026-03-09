@@ -50,7 +50,7 @@
 
 /* Label tooltip */
 .cb-label {
-  background: #002b7f;
+  background: #1a6eb5;
   color: #fff;
   font-size: .78rem;
   font-weight: 600;
@@ -75,7 +75,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #002b7f;
+  background: #1a6eb5;
   color: #fff;
   font-size: .65rem;
   font-weight: 700;
@@ -119,7 +119,7 @@
 
 /* ── Header — uses teal from brochure ───────────────────────────── */
 .cb-header {
-  background: linear-gradient(135deg, #002b7f 0%, #006b82 100%);
+  background: linear-gradient(135deg, #1a6eb5 0%, #006b82 100%);
   color: #fff;
   padding: 14px 16px;
   display: flex;
@@ -213,7 +213,7 @@
   color: #222;
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
-.cb-msg--bot a { color: #002b7f; text-decoration: underline; }
+.cb-msg--bot a { color: #1a6eb5; text-decoration: underline; }
 
 .cb-msg--user {
   background: linear-gradient(135deg, #e31e24, #a3151a);
@@ -255,11 +255,11 @@
 }
 .cb-chip {
   padding: 5px 14px;
-  border: 1.5px solid #002b7f;
+  border: 1.5px solid #1a6eb5;
   border-radius: 20px;
   font-size: .78rem;
   font-weight: 600;
-  color: #002b7f;
+  color: #1a6eb5;
   background: #fff;
   cursor: pointer;
   transition: background .2s, color .2s, transform .15s;
@@ -267,7 +267,7 @@
   font-family: inherit;
 }
 .cb-chip:hover {
-  background: #002b7f;
+  background: #1a6eb5;
   color: #fff;
   transform: translateY(-1px);
 }
@@ -294,7 +294,7 @@
   background: #f5f7fb;
   transition: border-color .2s, background .2s;
 }
-.cb-input-row input:focus { border-color: #002b7f; background: #fff; }
+.cb-input-row input:focus { border-color: #1a6eb5; background: #fff; }
 .cb-input-row input::placeholder { color: #aaa; }
 
 .cb-send {

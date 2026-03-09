@@ -5,8 +5,8 @@
 
 /* ── CUSTOM PROPERTIES ─────────────────────────────────────────── */
 :root {
-  --clr-primary:    #002b7f;   /* NEx-gEN navy blue  */
-  --clr-primary-dk: #001040;
+  --clr-primary:    #1a6eb5;   /* NEx-gEN light blue (matches logo) */
+  --clr-primary-dk: #0f4e8a;
   --clr-accent:     #e31e24;   /* NEx-gEN vibrant red */
   --clr-teal:       #006b82;   /* teal from brochure  */
   --clr-gold:       #c8a84b;   /* gold / ISO badge    */
