@@ -39,8 +39,8 @@
 .cb-bubble:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(227,30,36,.55); }
 
 .cb-bubble__icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   position: absolute;
   transition: opacity .2s ease, transform .2s ease;
 }
@@ -128,19 +128,17 @@
   flex-shrink: 0;
 }
 .cb-header__avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #e31e24;
   border: 2px solid rgba(255,255,255,.3);
   color: #fff;
-  font-size: .75rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  letter-spacing: -.02em;
+  overflow: hidden;
 }
 .cb-header__info { flex: 1; line-height: 1.3; }
 .cb-header__info strong { display: block; font-size: .92rem; font-weight: 700; }

@@ -292,4 +292,116 @@
     observer.observe(el);
   });
 
+  /* ── DEMO BUTTONS — inject into each course card ────────────────── */
+  $$('.cc[data-course]').forEach(card => {
+    const bd = card.querySelector('.cc__bd');
+    if (!bd) return;
+    const btn = document.createElement('button');
+    btn.className = 'cc__demo';
+    btn.innerHTML = '<i class="fa-solid fa-circle-play"></i> Watch Demo Class';
+    btn.addEventListener('click', () => openDemo(card.dataset.course, card.dataset.video || ''));
+    bd.insertBefore(btn, bd.querySelector('.cc__cta'));
+  });
+
 })();
+
+/* ================================================================
+   DEMO MODAL — YouTube IFrame API
+   ================================================================ */
+
+/* ── Load YouTube IFrame API ── */
+(function () {
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
+
+let ytPlayer = null;
+let ytReady  = false;
+
+/* Called automatically by YouTube API when ready */
+function onYouTubeIframeAPIReady() {
+  ytReady = true;
+}
+
+/* ── Open demo modal ── */
+function openDemo(courseName, videoId) {
+  const modal    = document.getElementById('demoModal');
+  const title    = document.getElementById('demoTitle');
+  const player   = document.getElementById('demoPlayer');
+  const cta      = document.getElementById('demoCTA');
+  const ctaTitle = document.getElementById('demoCTATitle');
+  const ctaMsg   = document.getElementById('demoCTAMsg');
+  const enrollBtn = document.getElementById('demoEnrollBtn');
+
+  title.textContent = courseName + ' — Course Demo';
+  cta.classList.remove('show');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* Destroy previous player */
+  if (ytPlayer) { try { ytPlayer.destroy(); } catch(e) {} ytPlayer = null; }
+
+  if (videoId) {
+    /* Create a fresh placeholder div for YT to replace */
+    player.innerHTML = '<div id="ytPlayerEl"></div>';
+
+    const tryCreate = () => {
+      if (!ytReady) { setTimeout(tryCreate, 200); return; }
+      ytPlayer = new YT.Player('ytPlayerEl', {
+        videoId,
+        width: '100%',
+        height: '100%',
+        playerVars: { autoplay: 1, rel: 0, modestbranding: 1, controls: 1 },
+        events: {
+          onStateChange: function (e) {
+            if (e.data === YT.PlayerState.ENDED) {
+              ctaTitle.textContent = '🎉 Liked what you saw?';
+              ctaMsg.textContent   = 'Enroll now and start your ' + courseName + ' journey today!';
+              enrollBtn.href       = '#contact';
+              cta.classList.add('show');
+            }
+          },
+        },
+      });
+    };
+    tryCreate();
+  } else {
+    /* No video yet — show coming-soon card */
+    player.innerHTML = `
+      <div class="demo-no-video">
+        <div class="demo-no-video__icon">🎬</div>
+        <h4>${courseName} Demo</h4>
+        <p>Our demo video for this course is being prepared.<br>Book a FREE live demo class with us right now!</p>
+        <a href="https://wa.me/916301012437?text=Hi%2C%20I%20want%20to%20book%20a%20demo%20class%20for%20${encodeURIComponent(courseName)}"
+           target="_blank" rel="noopener" class="btn btn--primary">
+          <i class="fa-brands fa-whatsapp"></i> Book Free Demo
+        </a>
+      </div>`;
+    /* Show enroll CTA immediately */
+    ctaTitle.textContent = 'Interested in ' + courseName + '?';
+    ctaMsg.textContent   = 'Fill in your details and our counsellor will call you back!';
+    enrollBtn.href       = '#contact';
+    cta.classList.add('show');
+  }
+}
+
+/* ── Close demo modal ── */
+function closeDemo() {
+  const modal  = document.getElementById('demoModal');
+  const player = document.getElementById('demoPlayer');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  if (ytPlayer) { try { ytPlayer.stopVideo(); } catch(e) {} }
+  setTimeout(() => { player.innerHTML = ''; }, 350);
+}
+
+document.getElementById('demoClose').addEventListener('click', closeDemo);
+document.getElementById('demoBackdrop').addEventListener('click', closeDemo);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDemo(); });
+
+/* Close and scroll to contact when Enroll Now is clicked */
+document.getElementById('demoEnrollBtn').addEventListener('click', function () {
+  closeDemo();
+});
+

@@ -109,6 +109,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .btn--outline:hover { background: var(--clr-white); color: var(--clr-primary); }
 
+.btn--wa {
+  background: #25d366;
+  color: #fff;
+  border: 2px solid #25d366;
+}
+.btn--wa:hover { background: #1da851; border-color: #1da851; }
+
 .btn--sm { padding: 8px 20px; font-size: .85rem; }
 .btn--full { width: 100%; justify-content: center; }
 
@@ -620,6 +627,166 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   box-shadow: 0 3px 10px rgba(227,30,36,.3);
 }
 .cc__cta:hover { opacity: .9; transform: translateY(-1px); }
+
+/* ── DEMO BUTTON on card ─────────────────────────────────────────── */
+.cc__demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--hc, var(--clr-primary));
+  background: transparent;
+  color: var(--hc, var(--clr-primary));
+  font-family: inherit;
+  font-size: .84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, color .2s, transform .15s;
+  margin-bottom: 4px;
+}
+.cc__demo:hover {
+  background: var(--hc, var(--clr-primary));
+  color: #fff;
+  transform: translateY(-1px);
+}
+.cc__demo i { font-size: .9rem; }
+
+/* ── DEMO MODAL ──────────────────────────────────────────────────── */
+.demo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.demo-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.demo-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(4px);
+}
+.demo-modal__box {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 720px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.35);
+  transform: translateY(24px) scale(.96);
+  transition: transform .3s ease;
+}
+.demo-modal.open .demo-modal__box {
+  transform: translateY(0) scale(1);
+}
+.demo-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid #eee;
+  gap: 12px;
+}
+.demo-modal__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.demo-modal__play-icon {
+  font-size: 1.4rem;
+  color: var(--clr-primary);
+}
+.demo-modal__header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+}
+.demo-modal__close {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: #f0f4f8;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, color .2s;
+  flex-shrink: 0;
+}
+.demo-modal__close:hover { background: #e31e24; color: #fff; }
+
+/* Video iframe wrapper */
+.demo-modal__player {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  background: #000;
+  overflow: hidden;
+}
+.demo-modal__player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Coming-soon / no-video card */
+.demo-no-video {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #0f2949 0%, #1a6eb5 100%);
+  color: #fff;
+  text-align: center;
+  padding: 24px;
+}
+.demo-no-video__icon { font-size: 3.5rem; line-height: 1; }
+.demo-no-video h4 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+.demo-no-video p { font-size: .9rem; opacity: .85; margin: 0; max-width: 320px; }
+.demo-no-video .btn { margin-top: 4px; }
+
+/* Post-video CTA */
+.demo-modal__cta {
+  padding: 20px 24px 24px;
+  display: none;
+  background: #f5f8ff;
+  border-top: 1px solid #e0eaff;
+}
+.demo-modal__cta.show { display: block; }
+.demo-modal__cta-inner { text-align: center; }
+.demo-modal__cta-emoji { font-size: 2.4rem; line-height: 1; margin-bottom: 10px; }
+.demo-modal__cta h4 { font-size: 1.15rem; font-weight: 800; margin-bottom: 6px; }
+.demo-modal__cta p  { font-size: .88rem; color: var(--clr-text-light); margin-bottom: 18px; }
+.demo-modal__cta-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.demo-enroll-btn { animation: demo-pulse 1.6s infinite; }
+@keyframes demo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227,30,36,.5); }
+  50%       { box-shadow: 0 0 0 8px rgba(227,30,36,0); }
+}
 
 /* ── FEATURES ───────────────────────────────────────────────────── */
 .features__grid {

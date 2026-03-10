@@ -7,12 +7,21 @@
 
   /* ── Build HTML ──────────────────────────────────────────────── */
   const html = `
-  <div id="cbLabel" class="cb-label">💬 Chat with us!</div>
+  <div id="cbLabel" class="cb-label">🤖 Chat with Nexie!</div>
   <div class="cb-bubble" id="cbBubble" aria-label="Open chat assistant" role="button" tabindex="0">
-    <svg class="cb-bubble__icon cb-bubble__icon--chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    <!-- Robot icon (default state) -->
+    <svg class="cb-bubble__icon cb-bubble__icon--chat" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="9" width="24" height="16" rx="4" fill="white"/>
+      <circle cx="11.5" cy="17" r="2.5" fill="#e31e24"/>
+      <circle cx="20.5" cy="17" r="2.5" fill="#e31e24"/>
+      <rect x="11" y="21" width="10" height="2" rx="1" fill="#e31e24"/>
+      <line x1="16" y1="4" x2="16" y2="9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="16" cy="3.5" r="2" fill="white"/>
+      <rect x="0" y="13" width="4" height="6" rx="2" fill="rgba(255,255,255,0.7)"/>
+      <rect x="28" y="13" width="4" height="6" rx="2" fill="rgba(255,255,255,0.7)"/>
     </svg>
-    <svg class="cb-bubble__icon cb-bubble__icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+    <!-- Close icon (open state) -->
+    <svg class="cb-bubble__icon cb-bubble__icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
     <span class="cb-unread" id="cbUnread">1</span>
