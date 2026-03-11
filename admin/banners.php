@@ -195,6 +195,11 @@ $today   = date('Y-m-d');
       <li class="active"><a href="banners.php"><i class="fa-solid fa-images"></i> Banners</a></li>
       <li><a href="banners.php?add=1"><i class="fa-solid fa-plus"></i> Add Banner</a></li>
       <li><a href="../index.html" target="_blank"><i class="fa-solid fa-eye"></i> Live Preview</a></li>
+      <li><a href="students.php"><i class="fa-solid fa-user-graduate"></i> Students</a></li>
+      <li><a href="batches.php"><i class="fa-solid fa-clock"></i> Batch Slots</a></li>
+      <li><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>
+      <li><a href="holidays.php"><i class="fa-solid fa-calendar-xmark"></i> Holidays</a></li>
+      <li><a href="sms-logs.php"><i class="fa-solid fa-comment-sms"></i> SMS Logs</a></li>
     </ul>
     <div class="admin-sidebar__stats">
       <div class="sidebar-stat">

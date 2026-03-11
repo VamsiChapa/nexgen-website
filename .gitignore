@@ -19,3 +19,10 @@ banners/images/*.jpeg
 banners/images/*.png
 banners/images/*.webp
 banners/images/*.gif
+
+# Student photos
+students/photos/
+
+# Cron logs (generated on server)
+cron/cron.log
+cron/biometric.log
