@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Verify and download your NEx-gEN School of Computers certificate. Enter your certificate number and name to access your certificate." />
+  <title>Certificate Verification | NEx-gEN School of Computers</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="images/logo.png" type="image/png" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Main CSS + Certificates CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/certificates.css" />
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="container top-bar__inner">
+    <div class="top-bar__left">
+      <span><i class="fa-solid fa-phone"></i> +91 6301012437</span>
+      <span><i class="fa-solid fa-envelope"></i> info.nexgensrikakulam@gmail.com</span>
+    </div>
+    <div class="top-bar__right">
+      <a href="https://facebook.com/nexgensrikakulam" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://wa.me/916301012437" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://www.instagram.com/info.nexgensrikakulam?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="navbar__logo">
+      <img src="images/logo.svg" alt="NEx-gEN School of Computers Logo"
+           onerror="this.src='images/logo.png';" />
+    </a>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="navbar__nav" id="nav-menu">
+      <ul>
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Us</a></li>
+        <li><a href="index.html#courses"  class="nav-link">Courses</a></li>
+        <li><a href="index.html#features" class="nav-link">Why Us</a></li>
+        <li><a href="index.html#gallery"  class="nav-link">Gallery</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+        <li><a href="certificates.html"   class="nav-link nav-link--active">Certificates</a></li>
+        <li><a href="index.html#contact"  class="btn btn--primary btn--sm">Enquire Now</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- PAGE HERO -->
+<section class="cert-hero">
+  <div class="container cert-hero__inner">
+    <div class="cert-hero__icon"><i class="fa-solid fa-certificate"></i></div>
+    <h1>Certificate <span>Verification</span></h1>
+    <p>Enter your certificate number and registered name to verify and download your NEx-gEN certificate.</p>
+  </div>
+</section>
+
+<!-- VERIFY FORM -->
+<section class="cert-section section">
+  <div class="container cert-container">
+
+    <!-- Verification Form Card -->
+    <div class="cert-card" id="verifyCard">
+      <div class="cert-card__header">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h2>Verify Your Certificate</h2>
+        <p>Your details are matched securely against our records.</p>
+      </div>
+
+      <form id="certForm" class="cert-form" novalidate>
+        <div class="cert-form__group">
+          <label for="certNumber">
+            <i class="fa-solid fa-hashtag"></i> Certificate Number *
+          </label>
+          <input
+            type="text"
+            id="certNumber"
+            name="certificate_number"
+            placeholder="e.g. NGN-2024-0001"
+            required
+            autocomplete="off"
+          />
+          <span class="cert-form__hint">Find this on your printed certificate</span>
+        </div>
+
+        <div class="cert-form__group">
+          <label for="studentName">
+            <i class="fa-solid fa-user"></i> Full Name (as on certificate) *
+          </label>
+          <input
+            type="text"
+            id="studentName"
+            name="student_name"
+            placeholder="e.g. Venkat Ramana"
+            required
+            autocomplete="off"
+          />
+          <span class="cert-form__hint">Enter your name exactly as printed on the certificate</span>
+        </div>
+
+        <div id="certError" class="cert-error" role="alert" style="display:none;">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="certErrorMsg">Certificate not found.</span>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full cert-submit" id="certSubmitBtn">
+          <span class="cert-submit__text"><i class="fa-solid fa-magnifying-glass"></i> Verify Certificate</span>
+          <span class="cert-submit__loading" style="display:none;"><i class="fa-solid fa-spinner fa-spin"></i> Verifying…</span>
+        </button>
+      </form>
+
+      <div class="cert-card__footer">
+        <i class="fa-solid fa-lock"></i>
+        <span>Secure verification — your information is not stored</span>
+      </div>
+    </div>
+
+    <!-- Result Card (shown after successful verification) -->
+    <div class="cert-result" id="certResult" style="display:none;">
+      <div class="cert-result__badge">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Certificate Verified</span>
+      </div>
+
+      <div class="cert-result__info">
+        <div class="cert-result__detail">
+          <span class="cert-result__label"><i class="fa-solid fa-hashtag"></i> Certificate No.</span>
+          <span class="cert-result__value" id="resCertNo"></span>
+        </div>
+        <div class="cert-result__detail">
+          <span class="cert-result__label"><i class="fa-solid fa-user"></i> Student Name</span>
+          <span class="cert-result__value" id="resName"></span>
+        </div>
+        <div class="cert-result__detail">
+          <span class="cert-result__label"><i class="fa-solid fa-book"></i> Course</span>
+          <span class="cert-result__value" id="resCourse"></span>
+        </div>
+        <div class="cert-result__detail">
+          <span class="cert-result__label"><i class="fa-solid fa-calendar"></i> Issue Date</span>
+          <span class="cert-result__value" id="resDate"></span>
+        </div>
+      </div>
+
+      <!-- Certificate Image Preview -->
+      <div class="cert-result__preview" id="certPreview">
+        <img id="certImage" src="" alt="Certificate" />
+      </div>
+
+      <div class="cert-result__actions">
+        <a id="certDownloadBtn" href="#" download class="btn btn--primary">
+          <i class="fa-solid fa-download"></i> Download Certificate
+        </a>
+        <button class="btn btn--outline" id="verifyAnotherBtn">
+          <i class="fa-solid fa-rotate-left"></i> Verify Another
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- INFO STRIP -->
+<section class="cert-info-strip">
+  <div class="container cert-info-strip__grid">
+    <div class="cert-info-item">
+      <i class="fa-solid fa-building-columns"></i>
+      <div>
+        <strong>Issued By</strong>
+        <span>NEx-gEN School of Computers, Srikakulam</span>
+      </div>
+    </div>
+    <div class="cert-info-item">
+      <i class="fa-solid fa-certificate"></i>
+      <div>
+        <strong>ISO Certified</strong>
+        <span>ISO 9001:2015 — Cert No. 11301923</span>
+      </div>
+    </div>
+    <div class="cert-info-item">
+      <i class="fa-solid fa-phone"></i>
+      <div>
+        <strong>Need Help?</strong>
+        <span><a href="tel:+916301012437">+91 6301012437</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer__top">
+    <div class="footer__col">
+      <div class="footer__logo">
+        <img src="images/logo.svg" alt="NEx-gEN School of Computers"
+             onerror="this.src='images/logo.png';" />
+      </div>
+      <p>An ISO 9001:2015 certified computer training institute committed to quality education since 2007.</p>
+      <div class="footer__social">
+        <a href="https://facebook.com/nexgensrikakulam" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://wa.me/916301012437" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/info.nexgensrikakulam?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+      </div>
+    </div>
+
+    <div class="footer__col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="index.html#courses">Courses</a></li>
+        <li><a href="index.html#features">Why Us</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="certificates.html">Certificates</a></li>
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="index.html#courses">PGDCA (6 Months)</a></li>
+        <li><a href="index.html#courses">DCA (3 Months)</a></li>
+        <li><a href="index.html#courses">Python (45 Days)</a></li>
+        <li><a href="index.html#courses">Java (45 Days)</a></li>
+        <li><a href="index.html#courses">HTML &amp; CSS (1 Month)</a></li>
+        <li><a href="index.html#courses">SQL/Database (1 Month)</a></li>
+        <li><a href="index.html#courses">Tally Prime</a></li>
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <h4>Contact Info</h4>
+      <ul class="footer__contact">
+        <li><i class="fa-solid fa-location-dot"></i> Opp. SP Office, Arts College Road, Near RTC Complex, Srikakulam – 532001, AP</li>
+        <li><i class="fa-solid fa-phone"></i> <a href="tel:+916301012437">+91 6301012437</a></li>
+        <li><i class="fa-solid fa-envelope"></i> <a href="mailto:info.nexgensrikakulam@gmail.com">info.nexgensrikakulam@gmail.com</a></li>
+        <li><i class="fa-solid fa-globe"></i> <a href="https://www.nex-gen.in" target="_blank" rel="noopener">www.nex-gen.in</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="container footer__bottom-inner">
+      <p>&copy; <span id="footerYear"></span> NEx-gEN School of Computers. All Rights Reserved.</p>
+      <p>Srikakulam, Andhra Pradesh, India.</p>
+    </div>
+  </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <i class="fa-solid fa-chevron-up"></i>
+</button>
+
+<script>
+/* ── Navbar hamburger ── */
+document.getElementById('hamburger').addEventListener('click', function () {
+  this.classList.toggle('open');
+  document.getElementById('nav-menu').classList.toggle('open');
+});
+
+/* ── Sticky navbar ── */
+window.addEventListener('scroll', function () {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+/* ── Back to top ── */
+const btt = document.getElementById('backToTop');
+window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 300));
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* ── Footer year ── */
+document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+/* ── Certificate verification ── */
+const form        = document.getElementById('certForm');
+const submitBtn   = document.getElementById('certSubmitBtn');
+const submitText  = submitBtn.querySelector('.cert-submit__text');
+const submitLoad  = submitBtn.querySelector('.cert-submit__loading');
+const certError   = document.getElementById('certError');
+const certErrorMsg= document.getElementById('certErrorMsg');
+const verifyCard  = document.getElementById('verifyCard');
+const certResult  = document.getElementById('certResult');
+
+form.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const certNumber  = document.getElementById('certNumber').value.trim();
+  const studentName = document.getElementById('studentName').value.trim();
+
+  if (!certNumber || !studentName) {
+    showError('Please enter both Certificate Number and Full Name.');
+    return;
+  }
+
+  // Show loading
+  submitText.style.display = 'none';
+  submitLoad.style.display = 'inline-flex';
+  submitBtn.disabled = true;
+  certError.style.display = 'none';
+
+  try {
+    const fd = new FormData();
+    fd.append('certificate_number', certNumber);
+    fd.append('student_name', studentName);
+
+    const resp = await fetch('api/verify-certificate.php', {
+      method: 'POST',
+      body: fd
+    });
+
+    const data = await resp.json();
+
+    if (data.success) {
+      showResult(data.certificate);
+    } else {
+      showError(data.message || 'Certificate not found. Please check your details and try again.');
+    }
+  } catch (err) {
+    showError('Unable to connect to server. Please try again later or call us at +91 6301012437.');
+  } finally {
+    submitText.style.display = 'inline-flex';
+    submitLoad.style.display = 'none';
+    submitBtn.disabled = false;
+  }
+});
+
+function showError(msg) {
+  certErrorMsg.textContent = msg;
+  certError.style.display = 'flex';
+  certError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showResult(cert) {
+  document.getElementById('resCertNo').textContent  = cert.certificate_number;
+  document.getElementById('resName').textContent    = cert.student_name;
+  document.getElementById('resCourse').textContent  = cert.course_name || '—';
+  document.getElementById('resDate').textContent    = cert.issue_date
+    ? new Date(cert.issue_date).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
+    : '—';
+
+  const certImage     = document.getElementById('certImage');
+  const certPreview   = document.getElementById('certPreview');
+  const downloadBtn   = document.getElementById('certDownloadBtn');
+
+  if (cert.certificate_url) {
+    certImage.src       = cert.certificate_url;
+    certPreview.style.display = 'block';
+    downloadBtn.href    = cert.certificate_url;
+    downloadBtn.download = 'NExgEN_Certificate_' + cert.certificate_number + '.jpg';
+    downloadBtn.style.display = 'inline-flex';
+  } else {
+    certPreview.style.display = 'none';
+    downloadBtn.style.display = 'none';
+  }
+
+  verifyCard.style.display  = 'none';
+  certResult.style.display  = 'block';
+  certResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('verifyAnotherBtn').addEventListener('click', function () {
+  certResult.style.display = 'none';
+  verifyCard.style.display = 'block';
+  form.reset();
+  certError.style.display  = 'none';
+  verifyCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+</script>
+
+</body>
+</html>

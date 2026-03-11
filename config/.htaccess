@@ -1,0 +1,3 @@
+# Deny all web access to this config directory
+Order deny,allow
+Deny from all

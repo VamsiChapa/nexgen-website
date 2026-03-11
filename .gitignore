@@ -2,3 +2,13 @@
 DEPLOYMENT.md
 README.md
 *.zip
+
+# Never commit database credentials
+config/db.php
+
+# Uploaded certificate images (upload directly to server)
+certificates/images/*.jpg
+certificates/images/*.jpeg
+certificates/images/*.png
+certificates/images/*.webp
+certificates/images/*.gif

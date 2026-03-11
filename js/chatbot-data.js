@@ -95,7 +95,7 @@ const NEXGEN_BOT = {
       id: 'about',
       keywords: ['about', 'who are you', 'nex gen', 'nexgen', 'institute', 'school', 'history', 'established', 'estd', 'founded', 'since', 'about nexgen'],
       responses: [
-        "NEx-gEN School of Computers was established in 2007 in Srikakulam, AP. 🏫\n\nISO 9001:2015 certified with 18+ years of excellence, training 5,000+ students in IT, Accounts, Admin & Design.\n\nOur formula: Theory + Practicals + Assignment + Evaluation = 🎓 Certificate",
+        "NEx-gEN School of Computers was established in 2007 in Srikakulam, AP. 🏫\n\nISO 9001:2015 certified with 18+ years of excellence, training 10,000+ students in IT, Accounts, Admin & Design.\n\nOur formula: Theory + Practicals + Assignment + Evaluation = 🎓 Certificate",
       ],
       quickReplies: ['📚 Courses offered', '🏫 Facilities', '📞 Contact us'],
     },
@@ -128,7 +128,7 @@ const NEXGEN_BOT = {
       id: 'pgdca',
       keywords: ['pgdca', 'post graduate diploma', 'pg diploma', 'pgdca course', 'post graduate computer'],
       responses: [
-        "📘 PGDCA — Post Graduate Diploma in Computer Applications\n\n✅ Duration: 1 Year\n✅ Eligibility: Any Graduate\n✅ Covers: MS-Office, C, C++, Java, Python, HTML, SQL, Tally, Internet\n✅ University recognised certificate\n✅ Best for job seekers & government exam aspirants\n\nWant to know about fees or admission?",
+        "📘 PGDCA — Post Graduate Diploma in Computer Applications\n\n✅ Duration: 6 Months\n✅ Eligibility: Any Graduate\n✅ Course modules as per brochure\n✅ Covers: MS-Office, C, C++, Java, Python, HTML, SQL, Tally, Internet\n✅ Best for job seekers & government exam aspirants\n\nWant to know about fees or admission?",
       ],
       quickReplies: ['PGDCA fees', '📝 Admission process', '📞 Contact us'],
     },
@@ -138,7 +138,7 @@ const NEXGEN_BOT = {
       id: 'dca',
       keywords: ['dca', 'diploma in computer', 'dca course', 'diploma computer applications'],
       responses: [
-        "📗 DCA — Diploma in Computer Applications\n\n✅ Duration: 6 Months\n✅ Eligibility: 10th / 12th Pass\n✅ Covers: MS-Office, Internet, Tally basics, C Language intro\n✅ Perfect start for IT careers!\n\nWant details on fees or how to join?",
+        "📗 DCA — Diploma in Computer Applications\n\n✅ Duration: 3 Months\n✅ Eligibility: 10th / 12th Pass\n✅ Course modules as per brochure\n✅ Covers: MS-Office, Internet, Tally basics, C Language intro\n✅ Perfect start for IT careers!\n\nWant details on fees or how to join?",
       ],
       quickReplies: ['DCA fees', '📝 Admission process', '📚 Other courses'],
     },
@@ -168,7 +168,7 @@ const NEXGEN_BOT = {
       id: 'python',
       keywords: ['python', 'python programming', 'learn python', 'python course', 'scripting', 'automation', 'data science', 'python language'],
       responses: [
-        "🐍 Python Programming\n\n✅ Duration: 3–4 Months\n✅ Eligibility: 12th Pass / Any Graduate\n✅ Topics: Python basics, OOP, File handling, Modules, Web scraping, Mini projects\n✅ Most in-demand language for jobs & freelancing 🔥\n\nAsk about fees or book a demo class!",
+        "🐍 Python Programming\n\n✅ Duration: 45 Days\n✅ Eligibility: 12th Pass / Any Graduate\n✅ Topics: Python basics, OOP, File handling, Modules, Web scraping, Mini projects\n✅ Most in-demand language for jobs & freelancing 🔥\n\nAsk about fees or book a demo class!",
       ],
       quickReplies: ['Python fees', 'Java course', '📝 Admission process'],
     },
@@ -178,7 +178,7 @@ const NEXGEN_BOT = {
       id: 'java',
       keywords: ['java', 'java programming', 'learn java', 'java course', 'object oriented', 'oops', 'oop', 'java language', 'core java'],
       responses: [
-        "☕ Java Programming\n\n✅ Duration: 3–4 Months\n✅ Topics: Core Java, OOP, Collections, Exception Handling, JDBC basics\n✅ Used for Android apps, web backends & enterprise software\n✅ Tested in government IT exams (IBPS SO etc.)\n\nWant fees or admission details?",
+        "☕ Java Programming\n\n✅ Duration: 45 Days\n✅ Topics: Core Java, OOP, Collections, Exception Handling, JDBC basics\n✅ Used for Android apps, web backends & enterprise software\n✅ Tested in government IT exams (IBPS SO etc.)\n\nWant fees or admission details?",
       ],
       quickReplies: ['Java fees', 'Python course', '📝 Admission process'],
     },
@@ -198,7 +198,7 @@ const NEXGEN_BOT = {
       id: 'html',
       keywords: ['html', 'html course', 'web design', 'web development', 'css', 'website', 'web design course', 'html and web', 'html css'],
       responses: [
-        "🌐 HTML & Web Design\n\n✅ Duration: 2 Months\n✅ Topics: HTML5, CSS3, Responsive design, Basic JavaScript\n✅ Build your own website by the end! 🌟\n✅ Great for freelancing & web careers",
+        "🌐 HTML & CSS — Web Design\n\n✅ Duration: 1 Month\n✅ Topics: HTML5, CSS3, Responsive design, Basic JavaScript\n✅ Build your own website by the end! 🌟\n✅ Great for freelancing & web careers",
       ],
       quickReplies: ['💰 Fees', '📚 Courses list', '📝 Admission process'],
     },
@@ -208,7 +208,7 @@ const NEXGEN_BOT = {
       id: 'sql',
       keywords: ['sql', 'database', 'mysql', 'dbms', 'sql course', 'database course', 'sql database', 'learn sql'],
       responses: [
-        "🗄️ SQL / Database Course\n\n✅ Duration: 1.5 Months\n✅ Topics: SQL queries, Joins, Views, Stored procedures, MySQL basics\n✅ Essential for software developers & data analysts 📊",
+        "🗄️ SQL / Database Course\n\n✅ Duration: 1 Month\n✅ Topics: SQL queries, Joins, Views, Stored procedures, MySQL basics\n✅ Essential for software developers & data analysts 📊",
       ],
       quickReplies: ['💰 Fees', '📚 Courses list', '📝 Admission process'],
     },
@@ -258,7 +258,7 @@ const NEXGEN_BOT = {
       id: 'timings',
       keywords: ['timing', 'timings', 'time', 'hours', 'batch', 'morning batch', 'evening batch', 'schedule', 'open', 'working hours', 'when open', 'batch timings'],
       responses: [
-        "🕐 Institute Timings:\n\n🌅 Morning: 9:00 AM – 12:00 PM\n☀️ Afternoon: 12:00 PM – 3:00 PM\n🌆 Evening: 4:00 PM – 7:00 PM\n\n📅 Open: Monday to Saturday\n\nCall to confirm batch availability 😊",
+        "🕐 Institute Batch Timings:\n\n🌅 Morning Batch: 8:00 AM – 12:00 Noon\n☀️ Afternoon Batch: 12:00 Noon – 4:00 PM\n🌆 Evening Batch: 4:00 PM – 8:00 PM\n\n📅 Open: Monday to Saturday\n\nCall to confirm batch availability 😊",
       ],
       quickReplies: ['📝 Admission process', '📍 Location', '📞 Contact us'],
     },
@@ -278,7 +278,7 @@ const NEXGEN_BOT = {
       id: 'placement',
       keywords: ['placement', 'job', 'jobs', 'career', 'employment', 'salary', 'work', 'opportunity', 'job placement', 'career guidance', 'get job'],
       responses: [
-        "💼 Placement at NEx-gEN:\n\n✅ Active placement assistance\n✅ Tie-ups with local IT companies & businesses\n✅ Resume building & interview prep\n✅ 90%+ students placed within 3–6 months 🚀\n\nLifetime support — even after your course ends!",
+        "💼 Placement at NEx-gEN:\n\n✅ Active placement assistance\n✅ Tie-ups with local IT companies & businesses\n✅ Resume building & interview prep\n✅ 80%+ students placed within 3–6 months 🚀\n\nLifetime support — even after your course ends!",
       ],
       quickReplies: ['📚 Courses offered', '📝 Admission process', '📞 Contact us'],
     },
@@ -297,7 +297,7 @@ const NEXGEN_BOT = {
     {
       id: 'call',
       keywords: ['call us', 'call now', 'ring', 'telephone', 'phone number'],
-      responses: ["📞 Call us directly:\n+91 6301012437\n\nAvailable Monday–Saturday, 9 AM – 7 PM 😊"],
+      responses: ["📞 Call us directly:\n+91 6301012437\n\nAvailable Monday–Saturday, 8 AM – 8 PM 😊"],
       quickReplies: ['💬 WhatsApp us', '📍 Location', '📚 Courses offered'],
     },
     {
@@ -305,6 +305,16 @@ const NEXGEN_BOT = {
       keywords: ['whatsapp us', 'whatsapp', 'chat on whatsapp', 'message us'],
       responses: ["💬 WhatsApp us directly:\nhttps://wa.me/916301012437\n\nOr message +91 6301012437 on WhatsApp 😊"],
       quickReplies: ['📞 Call us', '📍 Location', '📚 Courses offered'],
+    },
+
+    /* ── Certificate Verification ───────────────────────────────── */
+    {
+      id: 'certificate',
+      keywords: ['certificate', 'verify certificate', 'check certificate', 'certificate number', 'download certificate', 'my certificate', 'get certificate', 'cert'],
+      responses: [
+        "🎓 Certificate Verification:\n\nVisit our Certificates page to verify and download your certificate!\n\n🔗 Click 'Certificates' in the top navigation menu.\n\nYou will need:\n✅ Your Certificate Number\n✅ Your Full Name (as on certificate)\n\nFor help: 📞 +91 6301012437",
+      ],
+      quickReplies: ['📞 Contact us', '📝 Admission process', '📚 Courses offered'],
     },
 
     /* ── Demo class ─────────────────────────────────────────────── */
