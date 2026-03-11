@@ -12,3 +12,10 @@ certificates/images/*.jpeg
 certificates/images/*.png
 certificates/images/*.webp
 certificates/images/*.gif
+
+# Uploaded banner images (upload directly to server)
+banners/images/*.jpg
+banners/images/*.jpeg
+banners/images/*.png
+banners/images/*.webp
+banners/images/*.gif

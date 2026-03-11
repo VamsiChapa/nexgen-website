@@ -175,6 +175,8 @@ $totalPages = (int)ceil($totalCount / $perPage);
       <li class="active"><a href="index.php"><i class="fa-solid fa-certificate"></i> Certificates</a></li>
       <li><a href="index.php?view=add"><i class="fa-solid fa-plus"></i> Add Certificate</a></li>
       <li><a href="../certificates.html" target="_blank"><i class="fa-solid fa-magnifying-glass"></i> Verify Page</a></li>
+      <li><a href="banners.php"><i class="fa-solid fa-images"></i> Banners</a></li>
+      <li><a href="banners.php?add=1"><i class="fa-solid fa-image"></i> Add Banner</a></li>
     </ul>
     <div class="admin-sidebar__stats">
       <div class="sidebar-stat">

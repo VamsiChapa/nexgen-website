@@ -51,36 +51,109 @@
   }
   window.addEventListener('scroll', setActiveNav, { passive: true });
 
-  /* ── HERO SLIDER ─────────────────────────────────────────────── */
-  const heroSlides = $$('.hero__slide');
-  const heroDots   = $$('.hero__dot', document.getElementById('heroDots'));
-  let heroIndex    = 0;
-  let heroTimer;
+  /* ── HERO SLIDER — dynamic banners + static slides ──────────── */
 
-  function showHeroSlide(idx) {
-    heroSlides[heroIndex].classList.remove('hero__slide--active');
-    heroDots[heroIndex].classList.remove('hero__dot--active');
-    heroIndex = (idx + heroSlides.length) % heroSlides.length;
-    heroSlides[heroIndex].classList.add('hero__slide--active');
-    heroDots[heroIndex].classList.add('hero__dot--active');
+  /* Build one banner slide element from API data */
+  function createBannerSlide(b) {
+    const el  = document.createElement('div');
+    el.className = 'hero__slide hero__slide--banner';
+    const bg  = b.image_url
+      ? `background-image:url('${b.image_url}')`
+      : `background:${b.bg_color || '#0f4e8a'}`;
+    el.setAttribute('style', bg);
+
+    const title = b.title_span
+      ? `${b.title}<br/><span>${b.title_span}</span>`
+      : b.title;
+
+    const btn2 = b.btn2_text
+      ? `<a href="${b.btn2_link || '#contact'}" class="btn btn--outline">${b.btn2_text}</a>`
+      : '';
+
+    el.innerHTML = `
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        ${b.badge_text ? `<span class="hero__badge">${b.badge_text}</span>` : ''}
+        <h1>${title}</h1>
+        ${b.subtitle ? `<p>${b.subtitle}</p>` : ''}
+        <div class="hero__btns">
+          <a href="${b.btn1_link || '#courses'}" class="btn btn--primary">${b.btn1_text || 'Explore Courses'}</a>
+          ${btn2}
+        </div>
+      </div>`;
+    return el;
   }
 
-  function startHeroAuto() {
-    heroTimer = setInterval(() => showHeroSlide(heroIndex + 1), 5000);
+  /* Rebuild dots to match current slide count */
+  function rebuildDots(sliderEl, dotsEl) {
+    const count = sliderEl.querySelectorAll('.hero__slide').length;
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const d = document.createElement('span');
+      d.className = 'hero__dot' + (i === 0 ? ' hero__dot--active' : '');
+      d.dataset.index = i;
+      dotsEl.appendChild(d);
+    }
   }
 
-  $('#heroNext').addEventListener('click', () => { clearInterval(heroTimer); showHeroSlide(heroIndex + 1); startHeroAuto(); });
-  $('#heroPrev').addEventListener('click', () => { clearInterval(heroTimer); showHeroSlide(heroIndex - 1); startHeroAuto(); });
+  /* Initialise slider with whatever slides exist at call time */
+  function initHeroSlider() {
+    const slides     = $$('.hero__slide');
+    const dotsEl     = document.getElementById('heroDots');
+    const dots       = $$('.hero__dot', dotsEl);
+    let   idx        = 0;
+    let   timer;
 
-  heroDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      clearInterval(heroTimer);
-      showHeroSlide(parseInt(dot.dataset.index));
-      startHeroAuto();
-    });
-  });
+    function show(next) {
+      slides[idx].classList.remove('hero__slide--active');
+      dots[idx].classList.remove('hero__dot--active');
+      idx = (next + slides.length) % slides.length;
+      slides[idx].classList.add('hero__slide--active');
+      dots[idx].classList.add('hero__dot--active');
+    }
 
-  startHeroAuto();
+    function startAuto() { timer = setInterval(() => show(idx + 1), 5000); }
+
+    $('#heroNext').addEventListener('click', () => { clearInterval(timer); show(idx + 1); startAuto(); });
+    $('#heroPrev').addEventListener('click', () => { clearInterval(timer); show(idx - 1); startAuto(); });
+
+    dots.forEach(d => d.addEventListener('click', () => {
+      clearInterval(timer); show(+d.dataset.index); startAuto();
+    }));
+
+    startAuto();
+  }
+
+  /* Fetch banners → inject → init slider */
+  (async function loadBannersAndInitSlider() {
+    const sliderEl = document.getElementById('heroSlider');
+    const dotsEl   = document.getElementById('heroDots');
+
+    try {
+      const resp = await fetch('api/get-banners.php');
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.success && data.banners && data.banners.length > 0) {
+          /* Remove active from first static slide */
+          const firstStatic = sliderEl.querySelector('.hero__slide--active');
+          if (firstStatic) firstStatic.classList.remove('hero__slide--active');
+
+          /* Prepend banners (reverse so index-0 ends up first) */
+          [...data.banners].reverse().forEach(b => {
+            sliderEl.insertBefore(createBannerSlide(b), sliderEl.firstChild);
+          });
+
+          /* First banner is now active */
+          sliderEl.firstElementChild.classList.add('hero__slide--active');
+
+          /* Rebuild dots to match new total */
+          rebuildDots(sliderEl, dotsEl);
+        }
+      }
+    } catch (_) { /* Silently fall back to static slides */ }
+
+    initHeroSlider();
+  })();
 
   /* ── STATS COUNTER ───────────────────────────────────────────── */
   const statNums   = $$('.stat-number');
