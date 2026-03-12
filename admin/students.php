@@ -9,18 +9,22 @@ require_once '../config/db.php';
 
 $msg = ''; $msgType = '';
 
-/* ── Load all batches for dropdowns ─────────────────────────────── */
+/* ── Load active batches ─────────────────────────────────────────── */
 $allBatches = $pdo->query(
     'SELECT * FROM batches WHERE is_active=1 ORDER BY sort_order ASC, start_time ASC'
 )->fetchAll();
 $batchMap = array_column($allBatches, null, 'id');
 
+/* batch lookup by name (for CSV import) */
+$batchByName = [];
+foreach ($allBatches as $b) { $batchByName[strtolower(trim($b['name']))] = $b['id']; }
+
 /* ── DELETE ──────────────────────────────────────────────────────── */
 if (isset($_POST['action']) && $_POST['action'] === 'delete') {
     $id = (int)($_POST['id'] ?? 0);
     if ($id > 0) {
-        $pdo->prepare('DELETE FROM students WHERE id = ?')->execute([$id]);
-        $msg = 'Student record deleted.'; $msgType = 'success';
+        $pdo->prepare('DELETE FROM students WHERE id=?')->execute([$id]);
+        $msg = 'Student deleted.'; $msgType = 'success';
     }
 }
 
@@ -28,51 +32,59 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete') {
 if (isset($_POST['action']) && $_POST['action'] === 'toggle') {
     $id = (int)($_POST['id'] ?? 0);
     if ($id > 0) {
-        $pdo->prepare(
-            "UPDATE students SET status = IF(status='active','inactive','active') WHERE id = ?"
-        )->execute([$id]);
+        $pdo->prepare("UPDATE students SET status=IF(status='active','inactive','active') WHERE id=?")
+            ->execute([$id]);
         $msg = 'Status updated.'; $msgType = 'success';
     }
 }
 
+/* ── TOGGLE SMS ──────────────────────────────────────────────────── */
+if (isset($_POST['action']) && $_POST['action'] === 'toggle_sms') {
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) {
+        $pdo->prepare('UPDATE students SET sms_enabled=1-sms_enabled WHERE id=?')->execute([$id]);
+        $msg = 'SMS preference updated.'; $msgType = 'success';
+    }
+}
+
 /* ── ADD / EDIT ──────────────────────────────────────────────────── */
-if (isset($_POST['action']) && in_array($_POST['action'], ['add', 'edit'])) {
-    $editId   = (int)($_POST['edit_id']      ?? 0);
-    $name     = trim($_POST['student_name']  ?? '');
-    $phone    = preg_replace('/\D/', '', trim($_POST['phone'] ?? ''));
-    $email    = trim($_POST['email']         ?? '') ?: null;
-    $dob      = trim($_POST['date_of_birth'] ?? '') ?: null;
-    $gender   = trim($_POST['gender']        ?? '') ?: null;
-    $address  = trim($_POST['address']       ?? '') ?: null;
-    $course   = trim($_POST['course']        ?? '');
-    $batchId  = (int)($_POST['batch_id']     ?? 0);
-    $enroll   = trim($_POST['enrollment_date']?? '') ?: date('Y-m-d');
-    $pName    = trim($_POST['parent_name']   ?? '') ?: null;
-    $pPhone   = preg_replace('/\D/', '', trim($_POST['parent_phone'] ?? '')) ?: null;
-    $pEmail   = trim($_POST['parent_email']  ?? '') ?: null;
-    $pRel     = trim($_POST['parent_relation']?? '') ?: null;
-    $bioId    = trim($_POST['biometric_id']  ?? '') ?: null;
-    $notes    = trim($_POST['notes']         ?? '') ?: null;
-    $status   = trim($_POST['status']        ?? 'active');
+if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
+    $editId     = (int)($_POST['edit_id']        ?? 0);
+    $name       = trim($_POST['student_name']    ?? '');
+    $phone      = preg_replace('/\D/','',trim($_POST['phone'] ?? ''));
+    $email      = trim($_POST['email']           ?? '') ?: null;
+    $dob        = trim($_POST['date_of_birth']   ?? '') ?: null;
+    $gender     = trim($_POST['gender']          ?? '') ?: null;
+    $address    = trim($_POST['address']         ?? '') ?: null;
+    $course     = trim($_POST['course']          ?? '');
+    $batchId    = (int)($_POST['batch_id']       ?? 0);
+    $enroll     = trim($_POST['enrollment_date'] ?? '') ?: date('Y-m-d');
+    $pName      = trim($_POST['parent_name']     ?? '') ?: null;
+    $pPhone     = preg_replace('/\D/','',trim($_POST['parent_phone'] ?? '')) ?: null;
+    $pEmail     = trim($_POST['parent_email']    ?? '') ?: null;
+    $pRel       = trim($_POST['parent_relation'] ?? '') ?: null;
+    $bioId      = trim($_POST['biometric_id']    ?? '') ?: null;
+    $smsEnabled = isset($_POST['sms_enabled']) ? 1 : 0;
+    $notes      = trim($_POST['notes']           ?? '') ?: null;
+    $status     = trim($_POST['status']          ?? 'active');
 
     if (!$name || !$phone || !$course || !$batchId) {
         $msg = 'Name, phone, course and batch are required.'; $msgType = 'error';
     } else {
-        /* Photo upload */
+        /* Optional photo upload */
         $photoUrl = trim($_POST['photo_url_existing'] ?? '') ?: null;
         if (!empty($_FILES['photo']['name'])) {
-            $allowed = ['image/jpeg','image/png','image/webp'];
             $f = $_FILES['photo'];
-            if (!in_array($f['type'], $allowed)) {
+            if (!in_array($f['type'], ['image/jpeg','image/png','image/webp'])) {
                 $msg = 'Photo must be JPG, PNG or WEBP.'; $msgType = 'error';
-            } elseif ($f['size'] > 2 * 1024 * 1024) {
+            } elseif ($f['size'] > 2*1024*1024) {
                 $msg = 'Photo must be under 2 MB.'; $msgType = 'error';
             } else {
-                $ext     = pathinfo($f['name'], PATHINFO_EXTENSION);
-                $fname   = 'stu_' . preg_replace('/\D/', '', $phone) . '_' . time() . '.' . $ext;
-                $destDir = dirname(__DIR__) . '/students/photos/';
-                if (!is_dir($destDir)) mkdir($destDir, 0755, true);
-                if (move_uploaded_file($f['tmp_name'], $destDir . $fname)) {
+                $ext    = pathinfo($f['name'], PATHINFO_EXTENSION);
+                $fname  = 'stu_' . $phone . '_' . time() . '.' . $ext;
+                $dir    = dirname(__DIR__) . '/students/photos/';
+                if (!is_dir($dir)) mkdir($dir, 0755, true);
+                if (move_uploaded_file($f['tmp_name'], $dir . $fname)) {
                     $photoUrl = 'students/photos/' . $fname;
                 } else {
                     $msg = 'Photo upload failed.'; $msgType = 'error';
@@ -82,27 +94,27 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add', 'edit'])) {
 
         if ($msgType !== 'error') {
             $fields = [
-                $name, $phone, $email, $dob, $gender, $address,
-                $course, $batchId, $enroll,
-                $pName, $pPhone, $pEmail, $pRel,
-                $bioId, $status, $notes
+                $name,$phone,$email,$dob,$gender,$address,
+                $course,$batchId,$enroll,
+                $pName,$pPhone,$pEmail,$pRel,
+                $bioId,$smsEnabled,$status,$notes
             ];
             try {
                 if ($_POST['action'] === 'add') {
                     $pdo->prepare(
                         'INSERT INTO students
-                          (student_name,phone,email,date_of_birth,gender,address,
-                           course,batch_id,enrollment_date,
-                           parent_name,parent_phone,parent_email,parent_relation,
-                           biometric_id,status,notes,photo_url)
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                         (student_name,phone,email,date_of_birth,gender,address,
+                          course,batch_id,enrollment_date,
+                          parent_name,parent_phone,parent_email,parent_relation,
+                          biometric_id,sms_enabled,status,notes,photo_url)
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
                     )->execute(array_merge($fields, [$photoUrl]));
-                    $msg = "Student \"{$name}\" registered successfully."; $msgType = 'success';
+                    $msg = "Student \"{$name}\" registered."; $msgType = 'success';
                 } else {
                     $sets = 'student_name=?,phone=?,email=?,date_of_birth=?,gender=?,address=?,
                              course=?,batch_id=?,enrollment_date=?,
                              parent_name=?,parent_phone=?,parent_email=?,parent_relation=?,
-                             biometric_id=?,status=?,notes=?';
+                             biometric_id=?,sms_enabled=?,status=?,notes=?';
                     $vals = $fields;
                     if ($photoUrl !== null) { $sets .= ',photo_url=?'; $vals[] = $photoUrl; }
                     $vals[] = $editId;
@@ -110,13 +122,100 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add', 'edit'])) {
                     $msg = 'Student updated.'; $msgType = 'success';
                 }
             } catch (\PDOException $e) {
-                $msg = 'Error: Phone number may already exist.'; $msgType = 'error';
+                $msg = 'Error: phone number may already exist.'; $msgType = 'error';
             }
         }
     }
 }
 
-/* ── Fetch for edit ──────────────────────────────────────────────── */
+/* ── CSV BULK IMPORT ─────────────────────────────────────────────── */
+if (isset($_POST['action']) && $_POST['action'] === 'csv_import') {
+    if (!empty($_FILES['import_csv']['tmp_name'])) {
+        $handle  = fopen($_FILES['import_csv']['tmp_name'], 'r');
+        $headers = fgetcsv($handle);
+        if (!$headers) { $msg = 'CSV appears empty.'; $msgType = 'error'; goto done; }
+
+        /* Normalise header keys */
+        $hdr = array_map(fn($h) => strtolower(trim($h)), $headers);
+        $col = fn(string $name): int|false => array_search($name, $hdr);
+
+        $inserted = 0; $skipped = 0; $errors = [];
+
+        $stmt = $pdo->prepare(
+            'INSERT IGNORE INTO students
+             (student_name,phone,email,date_of_birth,gender,address,
+              course,batch_id,enrollment_date,
+              parent_name,parent_phone,parent_email,parent_relation,
+              sms_enabled,status,notes)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,\'active\',?)'
+        );
+
+        $rowNum = 1;
+        while (($row = fgetcsv($handle)) !== false) {
+            $rowNum++;
+            /* Skip blank rows */
+            if (implode('', $row) === '') continue;
+
+            $get = function(string $k) use ($row, $col): string {
+                $i = $col($k); return ($i !== false && isset($row[$i])) ? trim($row[$i]) : '';
+            };
+
+            $name   = $get('student_name');
+            $phone  = preg_replace('/\D/', '', $get('phone'));
+            $course = $get('course');
+            $bname  = strtolower(trim($get('batch_name')));
+
+            if (!$name || !$phone || !$course || !$bname) {
+                $errors[] = "Row {$rowNum}: Missing required field (name, phone, course or batch_name).";
+                $skipped++; continue;
+            }
+
+            /* Match batch by name */
+            $bId = null;
+            foreach ($batchByName as $bn => $bid) {
+                if (str_contains($bn, $bname) || str_contains($bname, $bn)) { $bId = $bid; break; }
+            }
+            if (!$bId) {
+                $errors[] = "Row {$rowNum}: Batch \"{$get('batch_name')}\" not found. Check Batch Slots.";
+                $skipped++; continue;
+            }
+
+            /* Parse optional date fields */
+            $dob    = $get('date_of_birth') ?: null;
+            $enroll = $get('enrollment_date') ?: date('Y-m-d');
+            $pPhone = preg_replace('/\D/', '', $get('parent_phone')) ?: null;
+
+            try {
+                $stmt->execute([
+                    $name, $phone,
+                    $get('email')    ?: null, $dob,
+                    $get('gender')   ?: null,
+                    $get('address')  ?: null,
+                    $course, $bId, $enroll,
+                    $get('parent_name')     ?: null, $pPhone,
+                    $get('parent_email')    ?: null,
+                    $get('parent_relation') ?: null,
+                    $get('notes')    ?: null,
+                ]);
+                if ($stmt->rowCount()) $inserted++;
+                else { $errors[] = "Row {$rowNum}: Phone {$phone} already exists — skipped."; $skipped++; }
+            } catch (\PDOException $e) {
+                $errors[] = "Row {$rowNum}: DB error — " . $e->getMessage();
+                $skipped++;
+            }
+        }
+        fclose($handle);
+
+        $msg = "Import complete: {$inserted} added, {$skipped} skipped.";
+        if ($errors) $msg .= '<br><small>' . implode('<br>', array_slice($errors, 0, 10)) . '</small>';
+        $msgType = $skipped > 0 ? 'warning' : 'success';
+    } else {
+        $msg = 'Please choose a CSV file.'; $msgType = 'error';
+    }
+    done:;
+}
+
+/* ── Edit row ────────────────────────────────────────────────────── */
 $editRow = null;
 if (isset($_GET['edit'])) {
     $s = $pdo->prepare('SELECT * FROM students WHERE id=?');
@@ -124,37 +223,30 @@ if (isset($_GET['edit'])) {
     $editRow = $s->fetch();
 }
 
-/* ── Paginated + filtered list ───────────────────────────────────── */
-$search   = trim($_GET['q']     ?? '');
-$bFilter  = (int)($_GET['batch'] ?? 0);
-$page     = max(1, (int)($_GET['page'] ?? 1));
-$perPage  = 20;
-$offset   = ($page - 1) * $perPage;
+/* ── Paginated list ──────────────────────────────────────────────── */
+$search  = trim($_GET['q']       ?? '');
+$bFilter = (int)($_GET['batch']  ?? 0);
+$page    = max(1,(int)($_GET['page'] ?? 1));
+$perPage = 20; $offset = ($page-1)*$perPage;
 
-$where  = '1=1'; $params = [];
+$where = '1=1'; $params = [];
 if ($search) {
     $where   .= ' AND (s.student_name LIKE ? OR s.phone LIKE ? OR s.parent_phone LIKE ?)';
     $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%";
 }
-if ($bFilter > 0) {
-    $where .= ' AND s.batch_id = ?'; $params[] = $bFilter;
-}
+if ($bFilter > 0) { $where .= ' AND s.batch_id=?'; $params[] = $bFilter; }
 
-$countStmt = $pdo->prepare("SELECT COUNT(*) FROM students s WHERE $where");
-$countStmt->execute($params);
-$totalCount = $countStmt->fetchColumn();
+$total = $pdo->prepare("SELECT COUNT(*) FROM students s WHERE $where");
+$total->execute($params); $totalCount = $total->fetchColumn();
 $totalPages = (int)ceil($totalCount / $perPage);
 
-$listStmt = $pdo->prepare(
+$list = $pdo->prepare(
     "SELECT s.*, b.name AS batch_name, b.start_time, b.end_time
-     FROM students s
-     LEFT JOIN batches b ON b.id = s.batch_id
-     WHERE $where
-     ORDER BY s.enrollment_date DESC, s.id DESC
-     LIMIT ? OFFSET ?"
+     FROM students s LEFT JOIN batches b ON b.id=s.batch_id
+     WHERE $where ORDER BY s.enrollment_date DESC, s.id DESC LIMIT ? OFFSET ?"
 );
-$listStmt->execute(array_merge($params, [$perPage, $offset]));
-$students = $listStmt->fetchAll();
+$list->execute(array_merge($params, [$perPage, $offset]));
+$students = $list->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -167,12 +259,20 @@ $students = $listStmt->fetchAll();
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;}
-    .avatar-placeholder{width:38px;height:38px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#94a3b8;}
-    .filter-bar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
-    .filter-bar select,.filter-bar input{padding:.45rem .8rem;border:1.5px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:.88rem;}
-    .batch-pill{display:inline-block;background:#eff6ff;color:#2563eb;padding:2px 9px;border-radius:12px;font-size:.75rem;font-weight:600;white-space:nowrap;}
-    .form-section-label{font-weight:600;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin:1.2rem 0 .4rem;padding-bottom:.3rem;border-bottom:1.5px solid #f1f5f9;}
+    .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e2e8f0;}
+    .avatar-placeholder{width:36px;height:36px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;}
+    .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;}
+    .filter-bar select,.filter-bar input{padding:.42rem .8rem;border:1.5px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:.87rem;}
+    .batch-pill{display:inline-block;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:10px;font-size:.74rem;font-weight:600;white-space:nowrap;}
+    .sec-label{font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin:1.1rem 0 .35rem;padding-bottom:.3rem;border-bottom:1.5px solid #f1f5f9;}
+    .opt-tag{font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:4px;}
+    .import-box{background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:12px;padding:1.2rem 1.4rem;}
+    .import-box p{margin:0 0 .7rem;font-size:.87rem;color:#475569;line-height:1.6;}
+    .import-row{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;}
+    .badge-sms-on{background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:.74rem;font-weight:600;cursor:pointer;border:none;}
+    .badge-sms-off{background:#f1f5f9;color:#94a3b8;padding:2px 9px;border-radius:20px;font-size:.74rem;font-weight:600;cursor:pointer;border:none;text-decoration:line-through;}
+    .hint{font-size:.75rem;color:#94a3b8;}
+    .alert--warning{background:#fffbeb;border-color:#fcd34d;color:#92400e;}
   </style>
 </head>
 <body class="admin-page">
@@ -180,7 +280,7 @@ $students = $listStmt->fetchAll();
 <header class="admin-header">
   <div class="admin-header__left">
     <img src="../images/logo.png" alt="NEx-gEN" class="admin-logo" onerror="this.style.display='none'" />
-    <span>Student Admin</span>
+    <span>Students</span>
   </div>
   <nav class="admin-header__nav">
     <a href="../index.html" target="_blank"><i class="fa-solid fa-globe"></i> View Site</a>
@@ -200,10 +300,7 @@ $students = $listStmt->fetchAll();
       <li><a href="sms-logs.php"><i class="fa-solid fa-comment-sms"></i> SMS Logs</a></li>
     </ul>
     <div class="admin-sidebar__stats">
-      <div class="sidebar-stat">
-        <strong><?= $totalCount ?></strong>
-        <span>Total Students</span>
-      </div>
+      <div class="sidebar-stat"><strong><?= $totalCount ?></strong><span>Total Students</span></div>
     </div>
   </aside>
 
@@ -211,16 +308,46 @@ $students = $listStmt->fetchAll();
 
     <?php if ($msg): ?>
     <div class="alert alert--<?= $msgType ?>">
-      <i class="fa-solid fa-<?= $msgType === 'success' ? 'circle-check' : 'circle-exclamation' ?>"></i>
-      <?= htmlspecialchars($msg) ?>
+      <i class="fa-solid fa-<?= $msgType === 'success' ? 'circle-check' : ($msgType === 'warning' ? 'triangle-exclamation' : 'circle-exclamation') ?>"></i>
+      <?= $msg ?>
     </div>
     <?php endif; ?>
 
-    <!-- ADD / EDIT FORM -->
+    <!-- ══ SECTION 1: CSV BULK IMPORT ══════════════════════════════ -->
+    <section class="admin-card">
+      <div class="admin-card__header">
+        <h2><i class="fa-solid fa-file-csv"></i> Bulk Import Students via CSV</h2>
+        <a href="student-template.php" class="btn-secondary" style="padding:.38rem .9rem;font-size:.82rem;">
+          <i class="fa-solid fa-download"></i> Download Template
+        </a>
+      </div>
+      <div class="import-box">
+        <p>
+          <strong>How to use:</strong> Click <em>Download Template</em> above to get a sample CSV with all columns.
+          Fill it in (only <strong>Name, Phone, Course, Batch</strong> are required — everything else is optional).
+          Then upload it below. Duplicate phone numbers are automatically skipped.
+        </p>
+        <p style="margin-bottom:.5rem;">
+          <strong>Batch name must match exactly</strong> — e.g. <code>8:00 AM – 9:00 AM</code>.
+          Check <a href="batches.php" target="_blank">Batch Slots</a> for the exact names.
+        </p>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="csv_import" />
+          <div class="import-row">
+            <input type="file" name="import_csv" accept=".csv,text/csv" required />
+            <button type="submit" class="btn-primary">
+              <i class="fa-solid fa-upload"></i> Import CSV
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ══ SECTION 2: SINGLE REGISTER / EDIT FORM ═════════════════ -->
     <section class="admin-card">
       <div class="admin-card__header">
         <h2><i class="fa-solid fa-<?= $editRow ? 'pen' : 'user-plus' ?>"></i>
-          <?= $editRow ? 'Edit Student' : 'Register New Student' ?></h2>
+          <?= $editRow ? 'Edit Student' : 'Register Single Student' ?></h2>
       </div>
 
       <form method="POST" enctype="multipart/form-data" class="admin-form">
@@ -231,30 +358,30 @@ $students = $listStmt->fetchAll();
         <?php endif; ?>
 
         <!-- Student Info -->
-        <p class="form-section-label"><i class="fa-solid fa-user"></i> Student Information</p>
+        <p class="sec-label"><i class="fa-solid fa-user"></i> Student Information</p>
         <div class="form-grid">
           <div class="form-group">
-            <label>Full Name *</label>
+            <label>Full Name <span style="color:#ef4444;">*</span></label>
             <input type="text" name="student_name" placeholder="Full name"
                    value="<?= htmlspecialchars($editRow['student_name'] ?? '') ?>" required />
           </div>
           <div class="form-group">
-            <label>Phone Number *</label>
+            <label>Phone <span style="color:#ef4444;">*</span></label>
             <input type="tel" name="phone" placeholder="10-digit mobile"
                    value="<?= htmlspecialchars($editRow['phone'] ?? '') ?>" required />
           </div>
           <div class="form-group">
-            <label>Email</label>
+            <label>Email <span class="opt-tag">(optional)</span></label>
             <input type="email" name="email"
                    value="<?= htmlspecialchars($editRow['email'] ?? '') ?>" />
           </div>
           <div class="form-group">
-            <label>Date of Birth</label>
+            <label>Date of Birth <span class="opt-tag">(optional)</span></label>
             <input type="date" name="date_of_birth"
                    value="<?= htmlspecialchars($editRow['date_of_birth'] ?? '') ?>" />
           </div>
           <div class="form-group">
-            <label>Gender</label>
+            <label>Gender <span class="opt-tag">(optional)</span></label>
             <select name="gender">
               <option value="">— Select —</option>
               <?php foreach (['male'=>'Male','female'=>'Female','other'=>'Other'] as $v=>$l): ?>
@@ -271,17 +398,17 @@ $students = $listStmt->fetchAll();
             </select>
           </div>
           <div class="form-group form-group--full">
-            <label>Address</label>
+            <label>Address <span class="opt-tag">(optional)</span></label>
             <textarea name="address" rows="2"><?= htmlspecialchars($editRow['address'] ?? '') ?></textarea>
           </div>
         </div>
 
         <!-- Enrollment -->
-        <p class="form-section-label"><i class="fa-solid fa-book-open"></i> Enrollment Details</p>
+        <p class="sec-label"><i class="fa-solid fa-book-open"></i> Enrollment Details</p>
         <div class="form-grid">
           <div class="form-group">
-            <label>Course *</label>
-            <input type="text" name="course" placeholder="e.g. PGDCA, DCA, Python…"
+            <label>Course <span style="color:#ef4444;">*</span></label>
+            <input type="text" name="course" placeholder="PGDCA / DCA / Python…"
                    value="<?= htmlspecialchars($editRow['course'] ?? '') ?>" required list="course-list" />
             <datalist id="course-list">
               <?php foreach (['PGDCA','DCA','Python Programming','Java Programming','HTML & CSS','SQL / Database','Tally Prime'] as $c): ?>
@@ -289,58 +416,59 @@ $students = $listStmt->fetchAll();
               <?php endforeach; ?>
             </datalist>
           </div>
-
           <div class="form-group">
-            <label>Batch / Class Timing *</label>
+            <label>Batch / Class Timing <span style="color:#ef4444;">*</span></label>
             <select name="batch_id" required>
               <option value="">— Select Batch —</option>
               <?php foreach ($allBatches as $b): ?>
-              <option value="<?= $b['id'] ?>"
-                <?= ($editRow['batch_id'] ?? 0) == $b['id'] ? 'selected' : '' ?>>
+              <option value="<?= $b['id'] ?>" <?= ($editRow['batch_id'] ?? 0) == $b['id'] ? 'selected' : '' ?>>
                 <?= htmlspecialchars($b['name']) ?>
               </option>
               <?php endforeach; ?>
             </select>
             <span class="hint">
-              Don't see your slot?
-              <a href="batches.php" target="_blank">Add it in Batch Slots</a>
+              Slot missing? <a href="batches.php" target="_blank">Add it in Batch Slots →</a>
             </span>
           </div>
-
           <div class="form-group">
             <label>Enrollment Date</label>
             <input type="date" name="enrollment_date"
                    value="<?= htmlspecialchars($editRow['enrollment_date'] ?? date('Y-m-d')) ?>" />
           </div>
-
           <div class="form-group">
-            <label>Biometric Device ID</label>
+            <label>
+              Biometric Device ID
+              <span class="opt-tag">(optional — future scope)</span>
+            </label>
             <input type="text" name="biometric_id" placeholder="e.g. 00042"
                    value="<?= htmlspecialchars($editRow['biometric_id'] ?? '') ?>" />
-            <span class="hint">The User ID stored in the biometric device</span>
+            <span class="hint">Leave blank if not using biometric device</span>
           </div>
         </div>
 
         <!-- Parent Info -->
-        <p class="form-section-label"><i class="fa-solid fa-users"></i> Parent / Guardian</p>
+        <p class="sec-label"><i class="fa-solid fa-users"></i> Parent / Guardian <span class="opt-tag">(all optional)</span></p>
         <div class="form-grid">
           <div class="form-group">
-            <label>Name</label>
+            <label>Parent Name</label>
             <input type="text" name="parent_name"
                    value="<?= htmlspecialchars($editRow['parent_name'] ?? '') ?>" />
           </div>
           <div class="form-group">
-            <label>Phone <small style="color:#64748b;">(WhatsApp/SMS alerts go here)</small></label>
+            <label>
+              Parent Phone
+              <span class="opt-tag">(WhatsApp/SMS alerts go here)</span>
+            </label>
             <input type="tel" name="parent_phone"
                    value="<?= htmlspecialchars($editRow['parent_phone'] ?? '') ?>" />
           </div>
           <div class="form-group">
-            <label>Email</label>
+            <label>Parent Email <span class="opt-tag">(optional)</span></label>
             <input type="email" name="parent_email"
                    value="<?= htmlspecialchars($editRow['parent_email'] ?? '') ?>" />
           </div>
           <div class="form-group">
-            <label>Relation</label>
+            <label>Relation <span class="opt-tag">(optional)</span></label>
             <input type="text" name="parent_relation" placeholder="Father / Mother / Guardian"
                    value="<?= htmlspecialchars($editRow['parent_relation'] ?? '') ?>" list="rel-list" />
             <datalist id="rel-list">
@@ -349,16 +477,32 @@ $students = $listStmt->fetchAll();
           </div>
         </div>
 
-        <!-- Photo & Notes -->
-        <p class="form-section-label"><i class="fa-solid fa-image"></i> Photo &amp; Notes</p>
+        <!-- Alerts + Photo -->
+        <p class="sec-label"><i class="fa-solid fa-bell"></i> Alerts &amp; Photo</p>
         <div class="form-grid">
           <div class="form-group">
-            <label>Student Photo</label>
+            <label>Absence SMS / WhatsApp Alerts</label>
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;margin-top:.3rem;">
+              <input type="checkbox" name="sms_enabled" value="1"
+                     <?= ($editRow['sms_enabled'] ?? 1) ? 'checked' : '' ?>
+                     style="width:16px;height:16px;accent-color:#2563eb;" />
+              <span style="font-size:.9rem;">Send absence alerts for this student</span>
+            </label>
+            <span class="hint">Uncheck to opt this student out of all automated alerts</span>
+          </div>
+          <div class="form-group">
+            <label>Photo <span class="opt-tag">(optional · JPG/PNG · max 2MB)</span></label>
             <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" />
-            <span class="hint">JPG / PNG / WEBP · max 2 MB</span>
+            <?php if (!empty($editRow['photo_url'])): ?>
+            <span class="hint">
+              <img src="../<?= htmlspecialchars($editRow['photo_url']) ?>"
+                   style="height:28px;width:28px;border-radius:50%;object-fit:cover;vertical-align:middle;" />
+              Existing photo kept if blank.
+            </span>
+            <?php endif; ?>
           </div>
           <div class="form-group form-group--full">
-            <label>Notes</label>
+            <label>Notes <span class="opt-tag">(optional)</span></label>
             <textarea name="notes" rows="2"><?= htmlspecialchars($editRow['notes'] ?? '') ?></textarea>
           </div>
         </div>
@@ -375,7 +519,7 @@ $students = $listStmt->fetchAll();
       </form>
     </section>
 
-    <!-- STUDENT LIST -->
+    <!-- ══ SECTION 3: STUDENT LIST ═════════════════════════════════ -->
     <section class="admin-card">
       <div class="admin-card__header">
         <h2><i class="fa-solid fa-list"></i> All Students (<?= $totalCount ?>)</h2>
@@ -407,7 +551,7 @@ $students = $listStmt->fetchAll();
             <tr>
               <th>#</th><th>Photo</th><th>Name</th><th>Phone</th>
               <th>Course</th><th>Batch</th><th>Parent Phone</th>
-              <th>Enrolled</th><th>Status</th><th>Actions</th>
+              <th>Alerts</th><th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -418,7 +562,7 @@ $students = $listStmt->fetchAll();
                 <?php if ($s['photo_url']): ?>
                 <img src="../<?= htmlspecialchars($s['photo_url']) ?>" class="avatar" alt="" />
                 <?php else: ?>
-                <div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="avatar-placeholder"><i class="fa-solid fa-user fa-sm"></i></div>
                 <?php endif; ?>
               </td>
               <td><?= htmlspecialchars($s['student_name']) ?></td>
@@ -426,13 +570,23 @@ $students = $listStmt->fetchAll();
               <td><?= htmlspecialchars($s['course']) ?></td>
               <td>
                 <span class="batch-pill">
-                  <?= $s['batch_name']
+                  <?= $s['start_time']
                       ? date('g:i', strtotime($s['start_time'])) . '–' . date('g:i A', strtotime($s['end_time']))
                       : '—' ?>
                 </span>
               </td>
               <td><?= htmlspecialchars($s['parent_phone'] ?? '—') ?></td>
-              <td><?= $s['enrollment_date'] ? date('d M Y', strtotime($s['enrollment_date'])) : '—' ?></td>
+              <td>
+                <form method="POST" style="display:inline;">
+                  <input type="hidden" name="action" value="toggle_sms" />
+                  <input type="hidden" name="id" value="<?= (int)$s['id'] ?>" />
+                  <button type="submit"
+                    class="<?= ($s['sms_enabled'] ?? 1) ? 'badge-sms-on' : 'badge-sms-off' ?>"
+                    title="Click to toggle SMS alerts">
+                    <?= ($s['sms_enabled'] ?? 1) ? '🔔 On' : '🔕 Off' ?>
+                  </button>
+                </form>
+              </td>
               <td>
                 <form method="POST" style="display:inline;">
                   <input type="hidden" name="action" value="toggle" />
@@ -446,12 +600,12 @@ $students = $listStmt->fetchAll();
                 <a href="?edit=<?= (int)$s['id'] ?>" class="btn-icon btn-icon--edit" title="Edit">
                   <i class="fa-solid fa-pen"></i>
                 </a>
-                <a href="attendance.php?student_id=<?= (int)$s['id'] ?>" class="btn-icon"
-                   style="background:#e0f2fe;color:#0369a1;" title="View Attendance">
+                <a href="attendance.php?student_id=<?= (int)$s['id'] ?>"
+                   class="btn-icon" style="background:#e0f2fe;color:#0369a1;" title="Attendance">
                   <i class="fa-solid fa-calendar-check"></i>
                 </a>
                 <form method="POST" style="display:inline;"
-                      onsubmit="return confirm('Delete this student and ALL their data?');">
+                      onsubmit="return confirm('Delete this student and ALL their records?');">
                   <input type="hidden" name="action" value="delete" />
                   <input type="hidden" name="id" value="<?= (int)$s['id'] ?>" />
                   <button type="submit" class="btn-icon btn-icon--delete" title="Delete">
@@ -469,7 +623,7 @@ $students = $listStmt->fetchAll();
 
       <?php if ($totalPages > 1): ?>
       <div class="pagination">
-        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+        <?php for ($p=1; $p<=$totalPages; $p++): ?>
         <a href="?page=<?= $p ?>&q=<?= urlencode($search) ?>&batch=<?= $bFilter ?>"
            class="<?= $p === $page ? 'active' : '' ?>"><?= $p ?></a>
         <?php endfor; ?>

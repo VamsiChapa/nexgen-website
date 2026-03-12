@@ -27,7 +27,13 @@
 
 /* ── Configuration ─────────────────────────────────────────────── */
 
-/* WhatsApp */
+/* ── MASTER SWITCH ────────────────────────────────────────────────
+   Set to false to disable ALL outgoing alerts system-wide.
+   Useful during testing or when you haven't set up a provider yet.
+   Individual students can also be opted out in Admin → Students. */
+define('ALERTS_ENABLED',      false);   /* ← SET TO true WHEN READY */
+
+/* WhatsApp (set ALERTS_ENABLED = true AND these keys to use) */
 define('WHATSAPP_ENABLED',    true);
 define('WHATSAPP_PROVIDER',   'ultramsg');   /* 'ultramsg' or 'meta' */
 
@@ -39,7 +45,7 @@ define('ULTRAMSG_TOKEN',      'YOUR_ULTRAMSG_TOKEN_HERE');
 define('META_WA_PHONE_ID',    'YOUR_META_PHONE_NUMBER_ID');
 define('META_WA_ACCESS_TOKEN','YOUR_META_ACCESS_TOKEN');
 
-/* SMS fallback — Fast2SMS */
+/* SMS fallback — Fast2SMS (used if WhatsApp fails or is disabled) */
 define('SMS_ENABLED',         true);
 define('FAST2SMS_API_KEY',    'YOUR_FAST2SMS_API_KEY_HERE');
 define('FAST2SMS_SENDER',     'NEXGEN');  /* Apply sender ID in Fast2SMS dashboard */
@@ -64,6 +70,12 @@ function sendMessage(
     ?int    $studentId     = null,
     string  $recipientName = ''
 ): array {
+    /* Global master switch — set ALERTS_ENABLED=true in config to activate */
+    if (!ALERTS_ENABLED) {
+        error_log('[NExGEN] Alerts disabled (ALERTS_ENABLED=false). Message NOT sent to ' . $phone);
+        return ['success' => false, 'channel' => 'none', 'response' => 'Alerts disabled in config'];
+    }
+
     $phone = _sanitisePhone($phone);
     if (!$phone) {
         _logSms($studentId, $recipientName, $phone, $message, $type, 'failed', 'Invalid phone');

@@ -86,11 +86,14 @@ foreach ($activeBatches as $batch) {
     $batchName = $batch['name'];
     cronLog("Processing batch [{$batchId}] {$batchName}");
 
-    /* Get all active students in this batch who have a phone number */
+    /* Get all active students in this batch who:
+       - have a phone number to contact
+       - have NOT opted out of alerts (sms_enabled = 1) */
     $students = $pdo->prepare(
         "SELECT id, student_name, parent_name, parent_phone, phone
          FROM   students
          WHERE  batch_id = ? AND status = 'active'
+           AND  sms_enabled = 1
            AND  (parent_phone IS NOT NULL OR phone IS NOT NULL)"
     );
     $students->execute([$batchId]);

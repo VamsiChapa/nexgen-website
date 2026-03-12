@@ -61,9 +61,13 @@ CREATE TABLE IF NOT EXISTS `students` (
   `parent_email`     VARCHAR(150)     DEFAULT NULL,
   `parent_relation`  VARCHAR(50)      DEFAULT NULL,
 
-  -- Biometric
+  -- Biometric (optional — future scope)
   `biometric_id`     VARCHAR(50)      DEFAULT NULL
-                     COMMENT 'ID stored in biometric device',
+                     COMMENT 'ID stored in biometric device — optional',
+
+  -- SMS / WhatsApp alerts
+  `sms_enabled`      TINYINT(1)       NOT NULL DEFAULT 1
+                     COMMENT '1=send absence alerts, 0=opted out',
 
   `status`           ENUM('active','inactive','completed','dropped')
                      NOT NULL DEFAULT 'active',
