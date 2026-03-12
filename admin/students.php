@@ -133,86 +133,97 @@ if (isset($_POST['action']) && $_POST['action'] === 'csv_import') {
     if (!empty($_FILES['import_csv']['tmp_name'])) {
         $handle  = fopen($_FILES['import_csv']['tmp_name'], 'r');
         $headers = fgetcsv($handle);
-        if (!$headers) { $msg = 'CSV appears empty.'; $msgType = 'error'; goto done; }
 
-        /* Normalise header keys */
-        $hdr = array_map(fn($h) => strtolower(trim($h)), $headers);
-        $col = fn(string $name): int|false => array_search($name, $hdr);
-
-        $inserted = 0; $skipped = 0; $errors = [];
-
-        $stmt = $pdo->prepare(
-            'INSERT IGNORE INTO students
-             (student_name,phone,email,date_of_birth,gender,address,
-              course,batch_id,enrollment_date,
-              parent_name,parent_phone,parent_email,parent_relation,
-              sms_enabled,status,notes)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,\'active\',?)'
-        );
-
-        $rowNum = 1;
-        while (($row = fgetcsv($handle)) !== false) {
-            $rowNum++;
-            /* Skip blank rows */
-            if (implode('', $row) === '') continue;
-
-            $get = function(string $k) use ($row, $col): string {
-                $i = $col($k); return ($i !== false && isset($row[$i])) ? trim($row[$i]) : '';
+        if (!$headers) {
+            $msg = 'CSV appears empty.'; $msgType = 'error';
+        } else {
+            /* Normalise header keys — PHP 7.4 compatible (no int|false union type) */
+            $hdr = array_map(function($h) { return strtolower(trim($h)); }, $headers);
+            $col = function($name) use ($hdr) {
+                $idx = array_search($name, $hdr);
+                return ($idx !== false) ? (int)$idx : null;
             };
 
-            $name   = $get('student_name');
-            $phone  = preg_replace('/\D/', '', $get('phone'));
-            $course = $get('course');
-            $bname  = strtolower(trim($get('batch_name')));
+            $inserted = 0; $skipped = 0; $errors = [];
 
-            if (!$name || !$phone || !$course || !$bname) {
-                $errors[] = "Row {$rowNum}: Missing required field (name, phone, course or batch_name).";
-                $skipped++; continue;
-            }
+            $stmt = $pdo->prepare(
+                'INSERT IGNORE INTO students
+                 (student_name,phone,email,date_of_birth,gender,address,
+                  course,batch_id,enrollment_date,
+                  parent_name,parent_phone,parent_email,parent_relation,
+                  sms_enabled,status,notes)
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,\'active\',?)'
+            );
 
-            /* Match batch by name */
-            $bId = null;
-            foreach ($batchByName as $bn => $bid) {
-                if (str_contains($bn, $bname) || str_contains($bname, $bn)) { $bId = $bid; break; }
-            }
-            if (!$bId) {
-                $errors[] = "Row {$rowNum}: Batch \"{$get('batch_name')}\" not found. Check Batch Slots.";
-                $skipped++; continue;
-            }
+            $rowNum = 1;
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowNum++;
+                if (implode('', $row) === '') continue;
 
-            /* Parse optional date fields */
-            $dob    = $get('date_of_birth') ?: null;
-            $enroll = $get('enrollment_date') ?: date('Y-m-d');
-            $pPhone = preg_replace('/\D/', '', $get('parent_phone')) ?: null;
+                /* Get cell value by column name — PHP 7.4 compatible closure */
+                $get = function($k) use ($row, $col) {
+                    $i = $col($k);
+                    return ($i !== null && isset($row[$i])) ? trim($row[$i]) : '';
+                };
 
-            try {
-                $stmt->execute([
-                    $name, $phone,
-                    $get('email')    ?: null, $dob,
-                    $get('gender')   ?: null,
-                    $get('address')  ?: null,
-                    $course, $bId, $enroll,
-                    $get('parent_name')     ?: null, $pPhone,
-                    $get('parent_email')    ?: null,
-                    $get('parent_relation') ?: null,
-                    $get('notes')    ?: null,
-                ]);
-                if ($stmt->rowCount()) $inserted++;
-                else { $errors[] = "Row {$rowNum}: Phone {$phone} already exists — skipped."; $skipped++; }
-            } catch (\PDOException $e) {
-                $errors[] = "Row {$rowNum}: DB error — " . $e->getMessage();
-                $skipped++;
+                $name   = $get('student_name');
+                $phone  = preg_replace('/\D/', '', $get('phone'));
+                $course = $get('course');
+                $bname  = strtolower(trim($get('batch_name')));
+
+                if (!$name || !$phone || !$course || !$bname) {
+                    $errors[] = "Row {$rowNum}: Missing required field (name, phone, course or batch_name).";
+                    $skipped++; continue;
+                }
+
+                /* Match batch by name — PHP 7.4: strpos instead of str_contains */
+                $bId = null;
+                foreach ($batchByName as $bn => $bid) {
+                    if (strpos($bn, $bname) !== false || strpos($bname, $bn) !== false) {
+                        $bId = $bid; break;
+                    }
+                }
+                if (!$bId) {
+                    $errors[] = "Row {$rowNum}: Batch \"{$get('batch_name')}\" not found. Check Batch Slots.";
+                    $skipped++; continue;
+                }
+
+                $dob    = $get('date_of_birth') ?: null;
+                $enroll = $get('enrollment_date') ?: date('Y-m-d');
+                $pPhone = preg_replace('/\D/', '', $get('parent_phone')) ?: null;
+
+                try {
+                    $stmt->execute([
+                        $name, $phone,
+                        $get('email')           ?: null, $dob,
+                        $get('gender')          ?: null,
+                        $get('address')         ?: null,
+                        $course, $bId, $enroll,
+                        $get('parent_name')     ?: null, $pPhone,
+                        $get('parent_email')    ?: null,
+                        $get('parent_relation') ?: null,
+                        $get('notes')           ?: null,
+                    ]);
+                    if ($stmt->rowCount()) {
+                        $inserted++;
+                    } else {
+                        $errors[] = "Row {$rowNum}: Phone {$phone} already exists — skipped.";
+                        $skipped++;
+                    }
+                } catch (\PDOException $e) {
+                    $errors[] = "Row {$rowNum}: DB error — " . $e->getMessage();
+                    $skipped++;
+                }
             }
+            fclose($handle);
+
+            $msg = "Import complete: {$inserted} added, {$skipped} skipped.";
+            if ($errors) $msg .= '<br><small>' . implode('<br>', array_slice($errors, 0, 10)) . '</small>';
+            $msgType = ($skipped > 0) ? 'warning' : 'success';
         }
-        fclose($handle);
-
-        $msg = "Import complete: {$inserted} added, {$skipped} skipped.";
-        if ($errors) $msg .= '<br><small>' . implode('<br>', array_slice($errors, 0, 10)) . '</small>';
-        $msgType = $skipped > 0 ? 'warning' : 'success';
     } else {
         $msg = 'Please choose a CSV file.'; $msgType = 'error';
     }
-    done:;
 }
 
 /* ── Edit row ────────────────────────────────────────────────────── */
@@ -236,17 +247,25 @@ if ($search) {
 }
 if ($bFilter > 0) { $where .= ' AND s.batch_id=?'; $params[] = $bFilter; }
 
-$total = $pdo->prepare("SELECT COUNT(*) FROM students s WHERE $where");
-$total->execute($params); $totalCount = $total->fetchColumn();
-$totalPages = (int)ceil($totalCount / $perPage);
+$totalCount = 0; $totalPages = 0; $students = [];
+try {
+    $total = $pdo->prepare("SELECT COUNT(*) FROM students s WHERE $where");
+    $total->execute($params);
+    $totalCount = (int)$total->fetchColumn();
+    $totalPages = (int)ceil($totalCount / $perPage);
 
-$list = $pdo->prepare(
-    "SELECT s.*, b.name AS batch_name, b.start_time, b.end_time
-     FROM students s LEFT JOIN batches b ON b.id=s.batch_id
-     WHERE $where ORDER BY s.enrollment_date DESC, s.id DESC LIMIT ? OFFSET ?"
-);
-$list->execute(array_merge($params, [$perPage, $offset]));
-$students = $list->fetchAll();
+    $list = $pdo->prepare(
+        "SELECT s.*, b.name AS batch_name, b.start_time, b.end_time
+         FROM students s LEFT JOIN batches b ON b.id=s.batch_id
+         WHERE $where ORDER BY s.enrollment_date DESC, s.id DESC LIMIT ? OFFSET ?"
+    );
+    $list->execute(array_merge($params, [$perPage, $offset]));
+    $students = $list->fetchAll();
+} catch (\PDOException $e) {
+    $msg     = 'Database error: ' . $e->getMessage()
+             . ' — Did you run db-setup-students.sql and db-migrate-sms-optional.sql in phpMyAdmin?';
+    $msgType = 'error';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
