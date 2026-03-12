@@ -118,7 +118,7 @@ const NEXGEN_BOT = {
          Use specific intent keywords for individual courses. */
       keywords: ['courses offered', 'all courses', 'course list', 'what courses', 'list courses', 'which courses', 'what do you offer', 'curriculum', 'courses available', 'what can i learn'],
       responses: [
-        "We offer the following courses 📚\n\n💻 PGDCA – Complete IT Professional Program\n💻 DCA – Fast-Track Computer Skills Diploma\n🧾 Tally Prime – Accounting & GST\n📊 MS-Office – Word, Excel, PowerPoint\n🐍 Python Programming\n☕ Java Programming\n⚙️ C Language\n🌐 HTML & Web Design\n🗄️ SQL / Database\n✍️ Handwriting Improvement (21 hrs)\n\nWhich course interests you?",
+        "We offer the following courses 📚\n\n💻 PGDCA – Complete IT Professional Program\n💻 DCA – Fast-Track Computer Skills\n🧾 Tally Prime – Accounting & GST\n📊 MS-Office – Word, Excel, PowerPoint\n🐍 Python Programming\n☕ Java Programming\n⚙️ C Language\n🌐 HTML & Web Design\n🗄️ SQL / Database\n✍️ Handwriting Improvement (21 hrs)\n\nWhich course interests you?",
       ],
       quickReplies: ['PGDCA', 'DCA', 'Tally', 'Python', 'Java', '💰 Course fees'],
     },
@@ -126,7 +126,7 @@ const NEXGEN_BOT = {
     /* ── PGDCA ──────────────────────────────────────────────────── */
     {
       id: 'pgdca',
-      keywords: ['pgdca', 'post graduate diploma', 'pg diploma', 'pgdca course', 'post graduate computer'],
+      keywords: ['pgdca', 'pg', 'pgdca course', 'post graduate computer'],
       responses: [
         "📘 PGDCA — Complete IT Professional Program\n\n✅ Duration: 6 Months\n✅ Eligibility: Any Graduate\n✅ Course modules as per brochure\n✅ Covers: MS-Office, C, C++, Java, Python, HTML, SQL, Tally, Internet\n✅ Best for job seekers & government exam aspirants\n\nWant to know about fees or admission?",
       ],
@@ -136,9 +136,9 @@ const NEXGEN_BOT = {
     /* ── DCA ────────────────────────────────────────────────────── */
     {
       id: 'dca',
-      keywords: ['dca', 'diploma in computer', 'dca course', 'diploma computer applications'],
+      keywords: ['dca',  'dca course', 'computer applications'],
       responses: [
-        "📗 DCA — Fast-Track Computer Skills Diploma\n\n✅ Duration: 3 Months\n✅ Eligibility: 10th / 12th Pass\n✅ Course modules as per brochure\n✅ Covers: MS-Office, Internet, Tally basics, C Language intro\n✅ Perfect start for IT careers!\n\nWant details on fees or how to join?",
+        "📗 DCA — Fast-Track Computer Skills \n\n✅ Duration: 3 Months\n✅ Eligibility: 10th / 12th Pass\n✅ Course modules as per brochure\n✅ Covers: MS-Office, Internet, Tally basics, C Language intro\n✅ Perfect start for IT careers!\n\nWant details on fees or how to join?",
       ],
       quickReplies: ['DCA fees', '📝 Admission process', '📚 Other courses'],
     },
