@@ -40,47 +40,55 @@ INSERT IGNORE INTO `batches` (`name`, `start_time`, `end_time`, `sort_order`) VA
 
 -- ── 2. STUDENTS ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS `students` (
-  `id`               INT UNSIGNED     NOT NULL AUTO_INCREMENT,
-  `student_name`     VARCHAR(100)     NOT NULL,
-  `phone`            VARCHAR(15)      NOT NULL,
-  `email`            VARCHAR(150)     DEFAULT NULL,
-  `date_of_birth`    DATE             DEFAULT NULL,
-  `gender`           ENUM('male','female','other') DEFAULT NULL,
-  `address`          TEXT             DEFAULT NULL,
-  `photo_url`        VARCHAR(512)     DEFAULT NULL,
+  `id`                 INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+
+  -- Unique admission number (auto-generated: NXG2026001)
+  -- Phone is NOT unique — siblings may share the same mobile number
+  `admission_number`   VARCHAR(20)      DEFAULT NULL
+                       COMMENT 'Auto-generated: NXG + Year + seq, e.g. NXG2026001',
+
+  `student_name`       VARCHAR(100)     NOT NULL,
+  `phone`              VARCHAR(15)      DEFAULT NULL
+                       COMMENT 'Student phone — NOT unique (siblings may share)',
+  `email`              VARCHAR(150)     DEFAULT NULL,
+  `date_of_birth`      DATE             DEFAULT NULL,
+  `gender`             ENUM('male','female','other') DEFAULT NULL,
+  `address`            TEXT             DEFAULT NULL,
+  `photo_url`          VARCHAR(512)     DEFAULT NULL,
 
   -- Enrollment
-  `course`           VARCHAR(100)     NOT NULL,
-  `batch_id`         INT UNSIGNED     NOT NULL
-                     COMMENT 'FK → batches.id',
-  `enrollment_date`  DATE             NOT NULL DEFAULT (CURDATE()),
+  `course`             VARCHAR(100)     NOT NULL,
+  `batch_id`           INT UNSIGNED     NOT NULL
+                       COMMENT 'FK → batches.id',
+  `enrollment_date`    DATE             NOT NULL DEFAULT (CURDATE()),
 
   -- Parent / Guardian
-  `parent_name`      VARCHAR(100)     DEFAULT NULL,
-  `parent_phone`     VARCHAR(15)      DEFAULT NULL,
-  `parent_email`     VARCHAR(150)     DEFAULT NULL,
-  `parent_relation`  VARCHAR(50)      DEFAULT NULL,
+  -- parent_phone is grouped in cron: one SMS per parent even if siblings both absent
+  `parent_name`        VARCHAR(100)     DEFAULT NULL,
+  `parent_phone`       VARCHAR(15)      DEFAULT NULL,
+  `parent_email`       VARCHAR(150)     DEFAULT NULL,
+  `parent_relation`    VARCHAR(50)      DEFAULT NULL,
 
   -- Biometric (optional — future scope)
-  `biometric_id`     VARCHAR(50)      DEFAULT NULL
-                     COMMENT 'ID stored in biometric device — optional',
+  `biometric_id`       VARCHAR(50)      DEFAULT NULL
+                       COMMENT 'ID stored in biometric device — optional',
 
   -- SMS / WhatsApp alerts
-  `sms_enabled`      TINYINT(1)       NOT NULL DEFAULT 1
-                     COMMENT '1=send absence alerts, 0=opted out',
+  `sms_enabled`        TINYINT(1)       NOT NULL DEFAULT 1
+                       COMMENT '1=send absence alerts, 0=opted out',
 
-  `status`           ENUM('active','inactive','completed','dropped')
-                     NOT NULL DEFAULT 'active',
-  `notes`            TEXT             DEFAULT NULL,
-  `created_at`       TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at`       TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP
-                     ON UPDATE CURRENT_TIMESTAMP,
+  `status`             ENUM('active','inactive','completed','dropped')
+                       NOT NULL DEFAULT 'active',
+  `notes`              TEXT             DEFAULT NULL,
+  `created_at`         TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`         TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP
+                       ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_phone`      (`phone`),
-  KEY        `idx_batch`     (`batch_id`),
-  KEY        `idx_status`    (`status`),
-  KEY        `idx_biometric` (`biometric_id`),
+  UNIQUE KEY `uq_admission_number` (`admission_number`),
+  KEY        `idx_batch`           (`batch_id`),
+  KEY        `idx_status`          (`status`),
+  KEY        `idx_biometric`       (`biometric_id`),
   CONSTRAINT `fk_student_batch`
     FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`)
     ON UPDATE CASCADE

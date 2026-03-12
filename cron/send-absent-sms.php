@@ -26,6 +26,11 @@
    ✓ Skips if student already has present/late attendance
    ✓ Skips if student is on approved leave
    ✓ Skips if absence SMS was already sent today (deduplication)
+
+   SIBLING SUPPORT:
+   ✓ Students sharing the same parent_phone (siblings) are grouped together.
+   ✓ ONE combined message is sent per parent: "your wards Ravi and Priya were absent…"
+   ✓ Every student still gets their own sms_logs row for reporting accuracy.
    ================================================================ */
 
 require_once dirname(__DIR__) . '/config/db.php';
@@ -104,6 +109,11 @@ foreach ($activeBatches as $batch) {
         continue;
     }
 
+    /* ── PASS 1: Check each student and collect confirmed-absent ones ──
+       Run all 3 skip-checks per student first, then group by recipient
+       phone so siblings get ONE combined message instead of duplicates. */
+    $absentByPhone = [];   /* key = recipient phone string */
+
     foreach ($list as $stu) {
         $sid  = (int)$stu['id'];
         $name = $stu['student_name'];
@@ -146,30 +156,100 @@ foreach ($activeBatches as $batch) {
             continue;
         }
 
-        /* ── Send message ───────────────────────────────────────── */
-        $recipientPhone = $stu['parent_phone'] ?: $stu['phone'];
-        $recipientName  = $stu['parent_name']  ?: 'Parent/Guardian';
+        /* Student is confirmed absent — resolve contact and group */
+        $recipientPhone = trim((string)($stu['parent_phone'] ?: $stu['phone']));
+        $recipientName  = $stu['parent_name'] ?: 'Parent/Guardian';
 
-        $message = buildAbsenceMessage(
-            $name,
-            $recipientName,
-            $batchName,
-            date('d M Y', strtotime($today))
-        );
+        if ($recipientPhone === '') {
+            cronLog("  SKIP [{$name}] — no valid contact phone.");
+            continue;
+        }
 
-        $result = sendMessage(
+        if (!isset($absentByPhone[$recipientPhone])) {
+            $absentByPhone[$recipientPhone] = [
+                'recipient_name' => $recipientName,
+                'students'       => [],
+            ];
+        }
+        $absentByPhone[$recipientPhone]['students'][] = [
+            'id'   => $sid,
+            'name' => $name,
+        ];
+    }
+
+    if (empty($absentByPhone)) {
+        cronLog("  No absent students to notify in this batch.");
+        continue;
+    }
+
+    /* ── PASS 2: Send ONE combined message per parent phone ───────────
+       Single absent child  → "your ward Ravi was absent…"
+       Multiple absent kids → "your wards Ravi and Priya were absent…" */
+    $dateLabel = date('d M Y', strtotime($today));
+
+    foreach ($absentByPhone as $recipientPhone => $group) {
+        $recipientName = $group['recipient_name'];
+        $stuList       = $group['students'];
+        $count         = count($stuList);
+
+        /* Build natural-language name list */
+        if ($count === 1) {
+            $nameList = $stuList[0]['name'];
+            $wardWord = 'ward';
+            $verbWord = 'was';
+        } else {
+            $names = array_column($stuList, 'name');
+            $last  = array_pop($names);
+            /* "Ravi" / "Ravi and Priya" / "Ravi, Priya and Arun" */
+            $nameList = (count($names) > 0 ? implode(', ', $names) . ' and ' : '') . $last;
+            $wardWord = 'wards';
+            $verbWord = 'were';
+        }
+
+        $message = "Dear {$recipientName}, your {$wardWord} {$nameList} {$verbWord} ABSENT"
+                 . " from the {$batchName} batch today ({$dateLabel})"
+                 . " at NEx-gEN School of Computers, Srikakulam."
+                 . " Please call: " . INSTITUTE_PHONE;
+
+        /* Send once (sendMessage internally logs for the primary student) */
+        $primaryStu = $stuList[0];
+        $result     = sendMessage(
             $recipientPhone,
             $message,
             'absence',
-            $sid,
+            $primaryStu['id'],
             $recipientName
         );
 
         $channel = strtoupper($result['channel']);
+        $logLine = implode(' & ', array_column($stuList, 'name'));
         if ($result['success']) {
-            cronLog("  SENT via {$channel} [{$name}] → {$recipientPhone}");
+            cronLog("  SENT via {$channel} [{$logLine}] → {$recipientPhone}");
         } else {
-            cronLog("  FAIL [{$name}] → {$recipientPhone} | " . substr($result['response'], 0, 100));
+            cronLog("  FAIL [{$logLine}] → {$recipientPhone} | " . substr($result['response'], 0, 100));
+        }
+
+        /* For sibling students (index 1+), insert sms_logs rows manually
+           so every student has their own record for accurate reporting. */
+        if ($count > 1) {
+            $logStatus = $result['success'] ? 'sent' : 'failed';
+            $logNote   = 'combined sibling alert — primary: ' . $primaryStu['name'];
+            $insStmt   = $pdo->prepare(
+                'INSERT INTO sms_logs
+                   (student_id, recipient_name, phone, message, type, status, provider_response)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)'
+            );
+            for ($i = 1; $i < $count; $i++) {
+                $insStmt->execute([
+                    $stuList[$i]['id'],
+                    $recipientName,
+                    $recipientPhone,
+                    $message,
+                    'absence',
+                    $logStatus,
+                    $logNote,
+                ]);
+            }
         }
     }
 }

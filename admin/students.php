@@ -9,6 +9,18 @@ require_once '../config/db.php';
 
 $msg = ''; $msgType = '';
 
+/* ── Auto-generate unique admission number ───────────────────────── */
+function generateAdmissionNumber($pdo) {
+    $year = date('Y');
+    $last = $pdo->query(
+        "SELECT admission_number FROM students
+         WHERE admission_number LIKE 'NXG{$year}%'
+         ORDER BY id DESC LIMIT 1"
+    )->fetchColumn();
+    $seq = $last ? ((int)substr($last, -4) + 1) : 1;
+    return 'NXG' . $year . str_pad($seq, 4, '0', STR_PAD_LEFT);
+}
+
 /* ── Load active batches ─────────────────────────────────────────── */
 $allBatches = $pdo->query(
     'SELECT * FROM batches WHERE is_active=1 ORDER BY sort_order ASC, start_time ASC'
@@ -68,8 +80,8 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
     $notes      = trim($_POST['notes']           ?? '') ?: null;
     $status     = trim($_POST['status']          ?? 'active');
 
-    if (!$name || !$phone || !$course || !$batchId) {
-        $msg = 'Name, phone, course and batch are required.'; $msgType = 'error';
+    if (!$name || !$course || !$batchId) {
+        $msg = 'Name, course and batch are required.'; $msgType = 'error';
     } else {
         /* Optional photo upload */
         $photoUrl = trim($_POST['photo_url_existing'] ?? '') ?: null;
@@ -101,15 +113,17 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
             ];
             try {
                 if ($_POST['action'] === 'add') {
+                    $admNo = generateAdmissionNumber($pdo);
                     $pdo->prepare(
                         'INSERT INTO students
-                         (student_name,phone,email,date_of_birth,gender,address,
+                         (admission_number,student_name,phone,email,date_of_birth,gender,address,
                           course,batch_id,enrollment_date,
                           parent_name,parent_phone,parent_email,parent_relation,
                           biometric_id,sms_enabled,status,notes,photo_url)
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-                    )->execute(array_merge($fields, [$photoUrl]));
-                    $msg = "Student \"{$name}\" registered."; $msgType = 'success';
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                    )->execute(array_merge([$admNo], $fields, [$photoUrl]));
+                    $msg = "Student \"{$name}\" registered. Admission No: <strong>{$admNo}</strong>";
+                    $msgType = 'success';
                 } else {
                     $sets = 'student_name=?,phone=?,email=?,date_of_birth=?,gender=?,address=?,
                              course=?,batch_id=?,enrollment_date=?,
@@ -122,7 +136,7 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
                     $msg = 'Student updated.'; $msgType = 'success';
                 }
             } catch (\PDOException $e) {
-                $msg = 'Error: phone number may already exist.'; $msgType = 'error';
+                $msg = 'Database error: ' . $e->getMessage(); $msgType = 'error';
             }
         }
     }
@@ -147,12 +161,12 @@ if (isset($_POST['action']) && $_POST['action'] === 'csv_import') {
             $inserted = 0; $skipped = 0; $errors = [];
 
             $stmt = $pdo->prepare(
-                'INSERT IGNORE INTO students
-                 (student_name,phone,email,date_of_birth,gender,address,
+                'INSERT INTO students
+                 (admission_number,student_name,phone,email,date_of_birth,gender,address,
                   course,batch_id,enrollment_date,
                   parent_name,parent_phone,parent_email,parent_relation,
                   sms_enabled,status,notes)
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,\'active\',?)'
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,\'active\',?)'
             );
 
             $rowNum = 1;
@@ -193,8 +207,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'csv_import') {
                 $pPhone = preg_replace('/\D/', '', $get('parent_phone')) ?: null;
 
                 try {
+                    $admNo = generateAdmissionNumber($pdo);
                     $stmt->execute([
-                        $name, $phone,
+                        $admNo, $name, $phone,
                         $get('email')           ?: null, $dob,
                         $get('gender')          ?: null,
                         $get('address')         ?: null,
@@ -385,9 +400,9 @@ try {
                    value="<?= htmlspecialchars($editRow['student_name'] ?? '') ?>" required />
           </div>
           <div class="form-group">
-            <label>Phone <span style="color:#ef4444;">*</span></label>
+            <label>Phone <span class="opt-tag">(optional — siblings may share same number)</span></label>
             <input type="tel" name="phone" placeholder="10-digit mobile"
-                   value="<?= htmlspecialchars($editRow['phone'] ?? '') ?>" required />
+                   value="<?= htmlspecialchars($editRow['phone'] ?? '') ?>" />
           </div>
           <div class="form-group">
             <label>Email <span class="opt-tag">(optional)</span></label>
@@ -427,10 +442,22 @@ try {
         <div class="form-grid">
           <div class="form-group">
             <label>Course <span style="color:#ef4444;">*</span></label>
-            <input type="text" name="course" placeholder="PGDCA / DCA / Python…"
+            <input type="text" name="course" placeholder="PGDCA / DCA / MS OFFICE…"
                    value="<?= htmlspecialchars($editRow['course'] ?? '') ?>" required list="course-list" />
             <datalist id="course-list">
-              <?php foreach (['PGDCA','DCA','Python Programming','Java Programming','HTML & CSS','SQL / Database','Tally Prime'] as $c): ?>
+              <?php foreach ([
+                  'MS OFFICE',
+                  'PROG IN C',
+                  'CORE JAVA',
+                  'PYTHON',
+                  'TALLY PRIME',
+                  'WEB DESIGNING',
+                  'MSO, C',
+                  'MSO, TALLY',
+                  'DCA',
+                  'PGDCA',
+                  'HAND WRITING',
+              ] as $c): ?>
               <option value="<?= $c ?>">
               <?php endforeach; ?>
             </datalist>
@@ -568,7 +595,7 @@ try {
         <table class="admin-table">
           <thead>
             <tr>
-              <th>#</th><th>Photo</th><th>Name</th><th>Phone</th>
+              <th>#</th><th>Adm. No</th><th>Photo</th><th>Name</th><th>Phone</th>
               <th>Course</th><th>Batch</th><th>Parent Phone</th>
               <th>Alerts</th><th>Status</th><th>Actions</th>
             </tr>
@@ -577,6 +604,9 @@ try {
             <?php if ($students): foreach ($students as $i => $s): ?>
             <tr class="<?= $s['status'] !== 'active' ? 'row--inactive' : '' ?>">
               <td><?= $offset + $i + 1 ?></td>
+              <td style="font-size:.78rem;font-weight:600;color:#2563eb;white-space:nowrap;">
+                <?= htmlspecialchars($s['admission_number'] ?? '—') ?>
+              </td>
               <td>
                 <?php if ($s['photo_url']): ?>
                 <img src="../<?= htmlspecialchars($s['photo_url']) ?>" class="avatar" alt="" />
@@ -634,7 +664,7 @@ try {
               </td>
             </tr>
             <?php endforeach; else: ?>
-            <tr><td colspan="10" class="empty">No students found.</td></tr>
+            <tr><td colspan="11" class="empty">No students found.</td></tr>
             <?php endif; ?>
           </tbody>
         </table>

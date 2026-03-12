@@ -15,8 +15,8 @@ $out = fopen('php://output', 'w');
 /* ── Header row (exactly what the importer expects) ─────────────── */
 fputcsv($out, [
     'student_name',    /* REQUIRED — Full name */
-    'phone',           /* REQUIRED — 10-digit mobile */
-    'course',          /* REQUIRED — e.g. PGDCA, DCA, Python Programming */
+    'phone',           /* optional — 10-digit mobile (siblings may share same number) */
+    'course',          /* REQUIRED — e.g. PGDCA, DCA, MS OFFICE, PYTHON, TALLY PRIME */
     'batch_name',      /* REQUIRED — must match exactly: e.g. "8:00 AM – 9:00 AM" */
     'email',           /* optional */
     'date_of_birth',   /* optional — YYYY-MM-DD */
@@ -24,17 +24,18 @@ fputcsv($out, [
     'address',         /* optional */
     'enrollment_date', /* optional — YYYY-MM-DD (today if blank) */
     'parent_name',     /* optional */
-    'parent_phone',    /* optional — 10-digit mobile */
+    'parent_phone',    /* optional — 10-digit mobile (used for absence alerts) */
     'parent_email',    /* optional */
     'parent_relation', /* optional — Father / Mother / Guardian */
     'notes',           /* optional */
+    /* NOTE: admission_number is auto-generated — do NOT include it */
 ]);
 
-/* ── Two example rows ────────────────────────────────────────────── */
+/* ── Three example rows (Row 3 shows siblings sharing parent_phone) ─ */
 fputcsv($out, [
     'Ravi Kumar',
     '9876543210',
-    'PGDCA',
+    'PGDCA',     /* from: MS OFFICE, PROG IN C, CORE JAVA, PYTHON, TALLY PRIME, WEB DESIGNING, MSO C, MSO TALLY, DCA, PGDCA, HAND WRITING */
     '8:00 AM – 9:00 AM',
     'ravi@email.com',
     '2000-06-15',
@@ -50,7 +51,7 @@ fputcsv($out, [
 fputcsv($out, [
     'Priya Devi',
     '9123456789',
-    'DCA',
+    'MS OFFICE',
     '10:00 AM – 11:00 AM',
     '',
     '2003-09-20',
@@ -62,6 +63,23 @@ fputcsv($out, [
     '',
     'Mother',
     'Scholarship student',
+]);
+/* Sibling example — same parent_phone as above row (cron sends one combined SMS) */
+fputcsv($out, [
+    'Arun Devi',
+    '',                 /* phone is optional */
+    'PYTHON',
+    '10:00 AM – 11:00 AM',
+    '',
+    '2005-02-10',
+    'male',
+    'Palasa, Srikakulam',
+    '2026-03-11',
+    'Lakshmi Devi',
+    '9123400001',       /* same parent_phone as sibling Priya Devi above */
+    '',
+    'Mother',
+    'Sibling of Priya Devi — shares parent phone',
 ]);
 
 fclose($out);
