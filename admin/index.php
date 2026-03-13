@@ -176,6 +176,7 @@ $totalPages = (int)ceil($totalCount / $perPage);
       <li><a href="index.php?view=add"><i class="fa-solid fa-plus"></i> Add Certificate</a></li>
       <li><a href="../certificates.html" target="_blank"><i class="fa-solid fa-magnifying-glass"></i> Verify Page</a></li>
       <li><a href="banners.php"><i class="fa-solid fa-images"></i> Banners</a></li>
+      <li><a href="enquiries.php"><i class="fa-solid fa-clipboard-list"></i> Enquiries</a></li>
       <li><a href="students.php"><i class="fa-solid fa-user-graduate"></i> Students</a></li>
       <li><a href="batches.php"><i class="fa-solid fa-clock"></i> Batch Slots</a></li>
       <li><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>

@@ -188,6 +188,7 @@ $p->execute([$viewDate]); $presentToday = $p->fetchColumn();
     <ul>
       <li><a href="index.php"><i class="fa-solid fa-certificate"></i> Certificates</a></li>
       <li><a href="banners.php"><i class="fa-solid fa-images"></i> Banners</a></li>
+      <li><a href="enquiries.php"><i class="fa-solid fa-clipboard-list"></i> Enquiries</a></li>
       <li><a href="students.php"><i class="fa-solid fa-user-graduate"></i> Students</a></li>
       <li><a href="batches.php"><i class="fa-solid fa-clock"></i> Batch Slots</a></li>
       <li class="active"><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>

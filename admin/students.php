@@ -31,6 +31,20 @@ $batchMap = array_column($allBatches, null, 'id');
 $batchByName = [];
 foreach ($allBatches as $b) { $batchByName[strtolower(trim($b['name']))] = $b['id']; }
 
+/* ── Load enquiry for pre-fill (conversion: enquiries → student) ─── */
+$fromEnquiry   = null;
+$fromEnquiryId = 0;
+if (!empty($_GET['from_enquiry'])) {
+    $feq = $pdo->prepare(
+        'SELECT * FROM enquiries WHERE id=? AND converted_to_student_id IS NULL LIMIT 1'
+    );
+    $feq->execute([(int)$_GET['from_enquiry']]);
+    $fromEnquiry = $feq->fetch() ?: null;
+    if ($fromEnquiry) {
+        $fromEnquiryId = (int)$fromEnquiry['id'];
+    }
+}
+
 /* ── DELETE ──────────────────────────────────────────────────────── */
 if (isset($_POST['action']) && $_POST['action'] === 'delete') {
     $id = (int)($_POST['id'] ?? 0);
@@ -76,9 +90,10 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
     $pEmail     = trim($_POST['parent_email']    ?? '') ?: null;
     $pRel       = trim($_POST['parent_relation'] ?? '') ?: null;
     $bioId      = trim($_POST['biometric_id']    ?? '') ?: null;
-    $smsEnabled = isset($_POST['sms_enabled']) ? 1 : 0;
-    $notes      = trim($_POST['notes']           ?? '') ?: null;
-    $status     = trim($_POST['status']          ?? 'active');
+    $smsEnabled      = isset($_POST['sms_enabled']) ? 1 : 0;
+    $notes           = trim($_POST['notes']           ?? '') ?: null;
+    $status          = trim($_POST['status']          ?? 'active');
+    $sourceEnquiryId = (int)($_POST['source_enquiry_id'] ?? 0);
 
     if (!$name || !$course || !$batchId) {
         $msg = 'Name, course and batch are required.'; $msgType = 'error';
@@ -113,17 +128,27 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
             ];
             try {
                 if ($_POST['action'] === 'add') {
-                    $admNo = generateAdmissionNumber($pdo);
+                    $admNo    = generateAdmissionNumber($pdo);
+                    $srcEnqId = ($sourceEnquiryId > 0) ? $sourceEnquiryId : null;
                     $pdo->prepare(
                         'INSERT INTO students
                          (admission_number,student_name,phone,email,date_of_birth,gender,address,
                           course,batch_id,enrollment_date,
                           parent_name,parent_phone,parent_email,parent_relation,
-                          biometric_id,sms_enabled,status,notes,photo_url)
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-                    )->execute(array_merge([$admNo], $fields, [$photoUrl]));
+                          biometric_id,sms_enabled,status,notes,source_enquiry_id,photo_url)
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                    )->execute(array_merge([$admNo], $fields, [$srcEnqId, $photoUrl]));
                     $msg = "Student \"{$name}\" registered. Admission No: <strong>{$admNo}</strong>";
                     $msgType = 'success';
+                    /* ── Link back to enquiry ── */
+                    if ($sourceEnquiryId > 0) {
+                        $newStudentId = (int)$pdo->lastInsertId();
+                        $pdo->prepare(
+                            "UPDATE enquiries SET status='enrolled', converted_to_student_id=?
+                             WHERE id=? AND converted_to_student_id IS NULL"
+                        )->execute([$newStudentId, $sourceEnquiryId]);
+                        $msg .= ' — Enquiry <strong>converted &amp; marked Enrolled</strong> ✓';
+                    }
                 } else {
                     $sets = 'student_name=?,phone=?,email=?,date_of_birth=?,gender=?,address=?,
                              course=?,batch_id=?,enrollment_date=?,
@@ -270,8 +295,11 @@ try {
     $totalPages = (int)ceil($totalCount / $perPage);
 
     $list = $pdo->prepare(
-        "SELECT s.*, b.name AS batch_name, b.start_time, b.end_time
-         FROM students s LEFT JOIN batches b ON b.id=s.batch_id
+        "SELECT s.*, b.name AS batch_name, b.start_time, b.end_time,
+                eq.enquiry_number AS source_enq_number
+         FROM students s
+         LEFT JOIN batches b ON b.id = s.batch_id
+         LEFT JOIN enquiries eq ON eq.id = s.source_enquiry_id
          WHERE $where ORDER BY s.enrollment_date DESC, s.id DESC LIMIT ? OFFSET ?"
     );
     $list->execute(array_merge($params, [$perPage, $offset]));
@@ -280,6 +308,19 @@ try {
     $msg     = 'Database error: ' . $e->getMessage()
              . ' — Did you run db-setup-students.sql and db-migrate-sms-optional.sql in phpMyAdmin?';
     $msgType = 'error';
+}
+/* ── Pre-fill helper for enquiry → registration conversion ──────── */
+$prefill = $editRow ?? [];
+if (!$editRow && $fromEnquiry) {
+    $coursesList = array_filter(array_map('trim', explode(',', $fromEnquiry['courses_interested'] ?? '')));
+    $firstCourse = (string)(reset($coursesList) ?: '');
+    $prefill = [
+        'student_name' => $fromEnquiry['name'],
+        'phone'        => $fromEnquiry['phone'],
+        'email'        => $fromEnquiry['email'] ?? '',
+        'course'       => $firstCourse,
+        'notes'        => 'Enquiry Ref: ' . $fromEnquiry['enquiry_number'],
+    ];
 }
 ?>
 <!DOCTYPE html>
@@ -327,6 +368,7 @@ try {
     <ul>
       <li><a href="index.php"><i class="fa-solid fa-certificate"></i> Certificates</a></li>
       <li><a href="banners.php"><i class="fa-solid fa-images"></i> Banners</a></li>
+      <li><a href="enquiries.php"><i class="fa-solid fa-clipboard-list"></i> Enquiries</a></li>
       <li class="active"><a href="students.php"><i class="fa-solid fa-user-graduate"></i> Students</a></li>
       <li><a href="batches.php"><i class="fa-solid fa-clock"></i> Batch Slots</a></li>
       <li><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>
@@ -384,11 +426,33 @@ try {
           <?= $editRow ? 'Edit Student' : 'Register Single Student' ?></h2>
       </div>
 
+      <?php if ($fromEnquiry): ?>
+      <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:10px;
+                  padding:12px 18px;margin:16px 20px 0;display:flex;align-items:center;
+                  gap:12px;font-size:.87rem;flex-wrap:wrap">
+        <i class="fa-solid fa-clipboard-list" style="color:#2563eb;font-size:1.1rem"></i>
+        <span>
+          Converting enquiry
+          <strong style="color:#1d4ed8"><?= htmlspecialchars($fromEnquiry['enquiry_number']) ?></strong>
+          — <strong><?= htmlspecialchars($fromEnquiry['name']) ?></strong>
+          <?php if ($fromEnquiry['courses_interested']): ?>
+          &nbsp;|&nbsp; Interested in: <em><?= htmlspecialchars($fromEnquiry['courses_interested']) ?></em>
+          <?php endif; ?>
+        </span>
+        <a href="enquiries.php" style="margin-left:auto;color:#3b82f6;font-size:.8rem;white-space:nowrap">
+          ← Back to Enquiries
+        </a>
+      </div>
+      <?php endif; ?>
+
       <form method="POST" enctype="multipart/form-data" class="admin-form">
         <input type="hidden" name="action" value="<?= $editRow ? 'edit' : 'add' ?>" />
         <?php if ($editRow): ?>
         <input type="hidden" name="edit_id" value="<?= (int)$editRow['id'] ?>" />
         <input type="hidden" name="photo_url_existing" value="<?= htmlspecialchars($editRow['photo_url'] ?? '') ?>" />
+        <?php endif; ?>
+        <?php if ($fromEnquiryId > 0): ?>
+        <input type="hidden" name="source_enquiry_id" value="<?= $fromEnquiryId ?>" />
         <?php endif; ?>
 
         <!-- Student Info -->
@@ -397,17 +461,17 @@ try {
           <div class="form-group">
             <label>Full Name <span style="color:#ef4444;">*</span></label>
             <input type="text" name="student_name" placeholder="Full name"
-                   value="<?= htmlspecialchars($editRow['student_name'] ?? '') ?>" required />
+                   value="<?= htmlspecialchars($prefill['student_name'] ?? '') ?>" required />
           </div>
           <div class="form-group">
             <label>Phone <span class="opt-tag">(optional — siblings may share same number)</span></label>
             <input type="tel" name="phone" placeholder="10-digit mobile"
-                   value="<?= htmlspecialchars($editRow['phone'] ?? '') ?>" />
+                   value="<?= htmlspecialchars($prefill['phone'] ?? '') ?>" />
           </div>
           <div class="form-group">
             <label>Email <span class="opt-tag">(optional)</span></label>
             <input type="email" name="email"
-                   value="<?= htmlspecialchars($editRow['email'] ?? '') ?>" />
+                   value="<?= htmlspecialchars($prefill['email'] ?? '') ?>" />
           </div>
           <div class="form-group">
             <label>Date of Birth <span class="opt-tag">(optional)</span></label>
@@ -443,7 +507,7 @@ try {
           <div class="form-group">
             <label>Course <span style="color:#ef4444;">*</span></label>
             <input type="text" name="course" placeholder="PGDCA / DCA / MS OFFICE…"
-                   value="<?= htmlspecialchars($editRow['course'] ?? '') ?>" required list="course-list" />
+                   value="<?= htmlspecialchars($prefill['course'] ?? '') ?>" required list="course-list" />
             <datalist id="course-list">
               <?php foreach ([
                   'MS OFFICE',
@@ -549,7 +613,7 @@ try {
           </div>
           <div class="form-group form-group--full">
             <label>Notes <span class="opt-tag">(optional)</span></label>
-            <textarea name="notes" rows="2"><?= htmlspecialchars($editRow['notes'] ?? '') ?></textarea>
+            <textarea name="notes" rows="2"><?= htmlspecialchars($prefill['notes'] ?? '') ?></textarea>
           </div>
         </div>
 
@@ -614,7 +678,17 @@ try {
                 <div class="avatar-placeholder"><i class="fa-solid fa-user fa-sm"></i></div>
                 <?php endif; ?>
               </td>
-              <td><?= htmlspecialchars($s['student_name']) ?></td>
+              <td>
+                <?= htmlspecialchars($s['student_name']) ?>
+                <?php if (!empty($s['source_enq_number'])): ?>
+                <br>
+                <a href="enquiries.php?q=<?= urlencode($s['source_enq_number']) ?>"
+                   class="enq-source-tag" title="Came via enquiry — click to view">
+                  <i class="fa-solid fa-clipboard-list fa-xs"></i>
+                  <?= htmlspecialchars($s['source_enq_number']) ?>
+                </a>
+                <?php endif; ?>
+              </td>
               <td><?= htmlspecialchars($s['phone']) ?></td>
               <td><?= htmlspecialchars($s['course']) ?></td>
               <td>
