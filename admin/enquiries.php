@@ -13,6 +13,7 @@ if (empty($_SESSION['admin_logged_in'])) { header('Location: login.php'); exit; 
 require_once dirname(__DIR__) . '/config/db.php';
 
 $msg = ''; $msgType = '';
+$newEnquiryId = 0; $newEnquiryName = ''; $newEnquiryNo = '';
 
 /* ── Course list (keep in sync with students.php) ────────────── */
 $COURSES = [
@@ -67,6 +68,9 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['add','edit'])) {
                  VALUES (?,?,?,?,?,?,?,?,?,?,?)'
             )->execute([$enqNo,$name,$phone,$email,$courses,$prefBatch,
                          $source,$message,$status,$followUp,$enqDate]);
+            $newEnquiryId   = (int)$pdo->lastInsertId();
+            $newEnquiryName = $name;
+            $newEnquiryNo   = $enqNo;
             $msg = "Enquiry <strong>{$enqNo}</strong> added for <strong>" . htmlspecialchars($name) . "</strong>.";
             $msgType = 'success';
         } catch (\PDOException $e) {
@@ -311,6 +315,7 @@ $statusCss = [
       <li><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>
       <li><a href="holidays.php"><i class="fa-solid fa-calendar-xmark"></i> Holidays</a></li>
       <li><a href="sms-logs.php"><i class="fa-solid fa-comment-sms"></i> SMS Logs</a></li>
+      <li><a href="analytics.php"><i class="fa-solid fa-chart-bar"></i> Analytics</a></li>
     </ul>
     <div class="admin-sidebar__stats">
       <div class="sidebar-stat">
@@ -694,6 +699,63 @@ $statusCss = [
 
   </main>
 </div>
+
+<?php if ($newEnquiryId > 0): ?>
+<!-- ══ REGISTRATION PROMPT MODAL (shown after new enquiry is saved) ══ -->
+<div id="reg-prompt"
+     style="position:fixed;inset:0;background:rgba(15,30,60,.55);display:flex;
+            align-items:center;justify-content:center;z-index:9999;padding:1rem">
+  <div style="background:#fff;border-radius:18px;padding:2.2rem 2.4rem;max-width:440px;
+              width:100%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.3);
+              animation:slideUp .25s ease">
+    <!-- Icon -->
+    <div style="width:60px;height:60px;border-radius:50%;background:#ede9fe;
+                display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem">
+      <i class="fa-solid fa-clipboard-check" style="color:#5b21b6;font-size:1.5rem"></i>
+    </div>
+    <!-- Title -->
+    <h3 style="margin:0 0 .4rem;font-size:1.15rem;font-weight:700;color:#0f172a">
+      Enquiry Saved!
+    </h3>
+    <p style="margin:0 0 .3rem;font-size:.93rem;color:#334155">
+      <strong><?= htmlspecialchars($newEnquiryName) ?></strong>
+      &nbsp;·&nbsp;
+      <code style="background:#f0f5ff;color:#4f46e5;padding:1px 7px;border-radius:6px;font-size:.82rem">
+        <?= htmlspecialchars($newEnquiryNo) ?>
+      </code>
+    </p>
+    <!-- Question -->
+    <p style="margin:.9rem 0 1.6rem;font-size:.9rem;color:#475569;line-height:1.6">
+      Would you like to <strong>register this student right now</strong>?
+      <br>
+      <span style="font-size:.82rem;color:#94a3b8">
+        Their details will be pre-filled in the registration form.
+      </span>
+    </p>
+    <!-- Buttons -->
+    <div style="display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+      <a href="students.php?from_enquiry=<?= $newEnquiryId ?>"
+         style="background:#4f46e5;color:#fff;padding:.6rem 1.6rem;border-radius:10px;
+                text-decoration:none;font-weight:600;font-size:.9rem;display:flex;
+                align-items:center;gap:.45rem;box-shadow:0 2px 8px rgba(79,70,229,.35)">
+        <i class="fa-solid fa-user-plus"></i> Yes, Register Now
+      </a>
+      <button onclick="document.getElementById('reg-prompt').style.display='none'"
+              style="background:#f8fafc;color:#475569;padding:.6rem 1.4rem;border-radius:10px;
+                     border:1.5px solid #e2e8f0;font-weight:600;font-size:.9rem;cursor:pointer;
+                     font-family:inherit">
+        Not Right Now
+      </button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+<?php endif; ?>
 
 <script>
 /* Inline quick-status update via fetch, then reload */

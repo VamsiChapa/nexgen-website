@@ -374,6 +374,7 @@ if (!$editRow && $fromEnquiry) {
       <li><a href="attendance.php"><i class="fa-solid fa-calendar-check"></i> Attendance</a></li>
       <li><a href="holidays.php"><i class="fa-solid fa-calendar-xmark"></i> Holidays</a></li>
       <li><a href="sms-logs.php"><i class="fa-solid fa-comment-sms"></i> SMS Logs</a></li>
+      <li><a href="analytics.php"><i class="fa-solid fa-chart-bar"></i> Analytics</a></li>
     </ul>
     <div class="admin-sidebar__stats">
       <div class="sidebar-stat"><strong><?= $totalCount ?></strong><span>Total Students</span></div>
