@@ -181,6 +181,44 @@
   window.addEventListener('scroll', animateStats, { passive: true });
   animateStats();
 
+  /* ── LIVE VISITOR COUNT — fetch real hits + 10,000 base ──────── */
+  function updateVisitorCount() {
+    try {
+      fetch('/api/hit-count.php?_=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          const visEl = document.getElementById('stat-visitors');
+          if (!visEl) return;
+          const base    = parseInt(visEl.dataset.base) || 10000;
+          const live    = parseInt(d.hits)             || 0;
+          const total   = base + live;
+          const prevTarget = parseInt(visEl.dataset.target) || base;
+          visEl.dataset.target = total;
+
+          if (!statsDone) return; /* animation will pick up data-target when it fires */
+
+          /* Smoothly count from whatever is currently displayed up to new total */
+          const from  = parseInt(visEl.textContent.replace(/[^0-9]/g, '')) || prevTarget;
+          if (total === from) return;
+          const diff  = Math.abs(total - from);
+          const frames = Math.ceil(1200 / 16); /* ~1.2 s animation */
+          const inc   = Math.max(1, Math.ceil(diff / frames));
+          let cur     = from;
+          const timer = setInterval(function () {
+            cur = (total > from)
+              ? Math.min(cur + inc, total)
+              : Math.max(cur - inc, total);
+            visEl.textContent = cur.toLocaleString('en-IN');
+            if (cur === total) clearInterval(timer);
+          }, 16);
+        })
+        .catch(function () { /* silently keep last value on network error */ });
+    } catch (e) { /* fetch unsupported — static base shown */ }
+  }
+
+  updateVisitorCount();                    /* run immediately on page load */
+  setInterval(updateVisitorCount, 30000);  /* refresh live count every 30 s */
+
   /* ── COURSE INTEREST FILTER ─────────────────────────────────── */
   const intBtns     = $$('.int-btn');
   const courseCards = $$('.cc');
